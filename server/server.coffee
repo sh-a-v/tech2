@@ -1,5 +1,7 @@
 'use strict'
 
+CONFIG = require('./config')
+
 express = require('express')
 mongoose = require('mongoose')
 
@@ -15,6 +17,6 @@ app = express()
 
 app
   .use('*', router)
-  .listen(1337, () ->
-    console.log('Express server listening on port ' + 1337)
+  .listen(CONFIG.PORT, () ->
+    console.log('Express server listening on port ' + CONFIG.PORT)
   )
