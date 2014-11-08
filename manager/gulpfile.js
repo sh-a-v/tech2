@@ -26,7 +26,7 @@ var
 
   paths = {
     stylesheetsBuildFolder: 'build/stylesheets/',  /* Stylesheets */
-    stylusFiles: [
+    stylesheetsFiles: [
       stylesheetsSrcPath + 'constants/*.styl',
 
       stylesheetsSrcPath + 'general/*.styl',
@@ -71,7 +71,7 @@ var
 
 
 gulp
-  .task('stylus', function () {  /* Stylesheets */
+  .task('stylesheets', function () {  /* Stylesheets */
     return gulp.src(paths.stylusFiles)
       .pipe(plumber())
       .pipe(concat('stylus.build.styl'))
@@ -83,7 +83,7 @@ gulp
       .pipe(gulp.dest(paths.stylesheetsBuildFolder));
   })
 
-  .task('js-lib', function () {  /* Scripts lib */
+  .task('scripts-lib', function () {  /* Scripts lib */
     return gulp.src(paths.scriptsLibFiles)
       .pipe(plumber())
       .pipe(concat('lib.build.min.js'))
@@ -91,7 +91,7 @@ gulp
       .pipe(gulp.dest(paths.scriptsLibBuildFolder));
   })
 
-  .task('js-app', function () {  /* Scripts app */
+  .task('scripts-app', function () {  /* Scripts app */
     return gulp.src(paths.scriptsAppFiles)
       .pipe(plumber())
       .pipe(concat('app.build.coffee'))
@@ -102,13 +102,15 @@ gulp
       .pipe(gulp.dest(paths.scriptsAppBuildFolder));
   })
 
-  .task('templates', function () {  /* Templates */
-    gulp.src(paths.templatesClientSideFiles)
+  .task('templates-client', function () {  /* Templates */
+    return gulp.src(paths.templatesClientSideFiles)
       .pipe(plumber())
       .pipe(templateCache({module: 'app', filename: 'client-side.build.js'}))
       .pipe(gulp.dest(paths.templatesBuildFolder));
+  })
 
-    gulp.src(paths.templatesServerSideFiles)
+  .task('templates-server', function () {
+    return gulp.src(paths.templatesServerSideFiles)
       .pipe(gulp.dest(paths.templatesBuildFolder));
   });
 
@@ -125,16 +127,19 @@ gulp
 
 gulp
   .task('build', function () {  /* Build */
-    gulp.start('stylus');
-    gulp.start('templates');
-    gulp.start('js-lib');
-    gulp.start('js-app');
+    gulp.start('templates-server');
+    gulp.start('templates-client');
+    gulp.start('stylesheets');
+    gulp.start('scripts-lib');
+    gulp.start('scripts-app');
   })
 
   .task('watch', ['browser-sync'], function() {  /* Watch */
-    gulp.watch(paths.stylusFiles, ['stylus', browserSync.reload]);
-    gulp.watch(paths.templatesFiles, ['templates', browserSync.reload]);
-    gulp.watch(paths.scriptsAppFiles, ['js-app', browserSync.reload]);
+    gulp.watch(paths.templatesServerSideFiles, ['templates-server', browserSync.reload]);
+    gulp.watch(paths.templatesClientSideFiles, ['templates-client', browserSync.reload]);
+    gulp.watch(paths.stylesheetsFiles, ['stylesheets', browserSync.reload]);
+    gulp.watch(paths.scriptsAppFiles, ['scripts-app', browserSync.reload]);
+    gulp.watch(paths.scriptsLibFiles, ['scripts-lib', browserSync.reload]);
   })
 
   .task('default', ['build', 'watch']);  /* Default */
