@@ -2,6 +2,7 @@
 
 var
   gulp = require('gulp'),
+  coffee = require('gulp-coffee'),
   stylus = require('gulp-stylus'),
   jade = require('gulp-jade'),
   concat = require('gulp-concat'),
@@ -43,17 +44,18 @@ var
       scriptLibSrcPath + '*.js',
       scriptLibSrcPath + '**/*.js'
     ],
+
     scriptsAppBuildFolder: 'build/scripts/',
     scriptsAppFiles: [
-      scriptAppSrcPath + 'init.js',
+      scriptAppSrcPath + 'init.coffee',
 
-      scriptAppSrcPath + 'general/*.js',
-      scriptAppSrcPath + 'general/**/*.js',
+      scriptAppSrcPath + 'general/*.coffee',
+      scriptAppSrcPath + 'general/**/*.coffee',
 
-      scriptAppSrcPath + 'module.js',
-      scriptAppSrcPath + '**/module.js',
-      scriptAppSrcPath + '*.js',
-      scriptAppSrcPath + '**/*.js'
+      scriptAppSrcPath + 'module.coffee',
+      scriptAppSrcPath + '**/module.coffee',
+      scriptAppSrcPath + '*.coffee',
+      scriptAppSrcPath + '**/*.coffee'
     ],
 
     templatesBuildFolder: 'build/templates/',  /* Templates */
@@ -92,7 +94,8 @@ gulp
   .task('js-app', function () {  /* Scripts app */
     return gulp.src(paths.scriptsAppFiles)
       .pipe(plumber())
-      .pipe(concat('app.build.js'))
+      .pipe(concat('app.build.coffee'))
+      .pipe(coffee())
       .pipe(gulp.dest(paths.scriptsAppBuildFolder))
       .pipe(uglify({mangle: false}))
       .pipe(rename({suffix: '.min'}))
