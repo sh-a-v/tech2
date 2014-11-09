@@ -23,7 +23,7 @@ extend UserSchema.methods,
   isAdmin: () ->
     @admin
 
-  isManager: () ->
+  isPublisher: () ->
     @publisher
 
 module.exports = mongoose.model('User', UserSchema)

@@ -11,4 +11,8 @@ module.exports = (email, password) ->
     html: "Ваш новый пароль: #{password}"
 
   smtpTransport.sendEmail mailOptions, (err, res) ->
-    return success: Boolean(err) res: res err: err
+    return {
+      success: Boolean(err)
+      res: res
+      err: err
+    }
