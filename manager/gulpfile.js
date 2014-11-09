@@ -60,12 +60,12 @@ var
 
     templatesBuildFolder: 'build/templates/',  /* Templates */
     templatesServerSideFiles: [
-      'templates/server-side/*.jade',
-      'templates/server-side/**/*.jade'
+      templatesServerSideSrcPath + '*.jade',
+      templatesServerSideSrcPath + '**/*.jade'
     ],
     templatesClientSideFiles: [
-      'templates/client-side/*.jade',
-      'templates/client-side/**/*.jade'
+      templatesClientSideSrcPath + '*.jade',
+      templatesClientSideSrcPath + '**/*.jade'
     ]
   };
 
@@ -105,12 +105,14 @@ gulp
   .task('templates-client', function () {  /* Templates */
     return gulp.src(paths.templatesClientSideFiles)
       .pipe(plumber())
+      .pipe(jade())
       .pipe(templateCache({module: 'app', filename: 'client-side.build.js'}))
       .pipe(gulp.dest(paths.templatesBuildFolder));
   })
 
   .task('templates-server', function () {
     return gulp.src(paths.templatesServerSideFiles)
+      .pipe(jade())
       .pipe(gulp.dest(paths.templatesBuildFolder));
   });
 
