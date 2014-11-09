@@ -4,16 +4,16 @@ mongoose = require('mongoose')
 bcrypt = require('bcrypt-nodejs')
 extend = require('extend')
 
-UserSchema = new mongoose.Schema(
+UserSchema = new mongoose.Schema
   local:
     email: type: String, required: true, unique: true
     password: type: String, required: true
 
   publisher: type: Boolean, default: false
   admin: type: Boolean, default: false
-)
 
-extend UserSchema.methods, {
+
+extend UserSchema.methods,
   generateHash: (password) ->
     bcrypt.hashSync(password, bcrypt.genSaltSync(8), null)
 
@@ -25,6 +25,5 @@ extend UserSchema.methods, {
 
   isManager: () ->
     @publisher
-}
 
 module.exports = mongoose.model('User', UserSchema)
