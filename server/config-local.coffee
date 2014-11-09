@@ -1,0 +1,16 @@
+'use strict'
+
+CONFIG_LOCAL =
+  PORT: 1337
+
+  STATIC_FILES_PATH: ''
+  BASE_TEMPLATE_PATH: ''
+
+  SECRET: ''
+  DATABASE_URL: ''
+
+  MAIL_SERVICE: ''
+  MAIL_USER: ''
+  MAIL_PASSWORD: ''
+
+module.exports = CONFIG_LOCAL
