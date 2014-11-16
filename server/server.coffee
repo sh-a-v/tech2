@@ -4,12 +4,13 @@ CONFIG = require('./config')
 
 express = require('express')
 mongoose = require('mongoose')
-subdomain = require('express-subdomain')
 
+subdomain = require('express-subdomain')
 bodyParser = require('body-parser')
 session = require('express-session')
 flash = require('connect-flash')
 compression = require('compression')
+passport = require('./api/auth/passport')
 MongoStore = require('connect-mongo')(session)
 
 clientRouter = require('./router/client-router')
@@ -17,6 +18,27 @@ managerRouter = require('./router/manager-router')
 apiRouter = require('./router/api-router')
 
 app = express()
+
+mongoose.connect(CONFIG.DATABASE_URL)
+
+app.use compression
+app.use bodyParser.json()
+app.use bodyParser.urlencoded
+  extended: true
+app.use session
+  secret: CONFIG.SECRET
+  cookie:
+    maxAge: 31536000000
+  store: new MongoStore
+    url: CONFIG.DATABASE_URL
+  resave: true
+  saveUninitialized: true
+app.use passport.initialize()
+app.use passport.session()
+app.use flash()
+
+app.use '/static/client', express.static(CONFIG.CLIENT.STATIC_FILES_PATH)
+app.use '/static/manager', express.static(CONFIG.MANAGER.STATIC_FILES_PATH)
 
 app.use subdomain('api', apiRouter)
 app.use subdomain('manager', managerRouter)
