@@ -14,9 +14,11 @@ MongoStore = require('connect-mongo')(session)
 
 clientRouter = require('./router/client-router')
 managerRouter = require('./router/manager-router')
+apiRouter = require('./router/api-router')
 
 app = express()
 
+app.use subdomain('api', apiRouter)
 app.use subdomain('manager', managerRouter)
 app.use '*', clientRouter
 
