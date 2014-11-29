@@ -32,4 +32,15 @@
     };
   });
 
+  app.controller('MenuCtrl', function($scope) {});
+
+  app.directive('menu', function() {
+    return {
+      restrict: 'EA',
+      templateUrl: 'menu.html',
+      controller: 'MenuCtrl',
+      link: function(scope, el, attrs) {}
+    };
+  });
+
 }).call(this);

@@ -1,0 +1,1 @@
+angular.module("app").run(["$templateCache", function($templateCache) {$templateCache.put("menu.html","<ul class=\"menu-items\"><li class=\"menu-item\">Главная</li><li class=\"menu-item\">Каталог</li></ul>");}]);

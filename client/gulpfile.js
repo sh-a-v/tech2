@@ -27,6 +27,9 @@ var
   paths = {
     stylesheetsBuildFolder: 'build/stylesheets/',  /* Stylesheets */
     stylesheetsFiles: [
+      stylesheetsSrcPath + 'mixins/*.styl',
+      stylesheetsSrcPath + 'mixins/**/*.styl',
+
       stylesheetsSrcPath + 'general/*.styl',
       stylesheetsSrcPath + 'general/**/*.styl',
 
