@@ -74,7 +74,7 @@ gulp
   .task('stylesheets', function () {  /* Stylesheets */
     return gulp.src(paths.stylusFiles)
       .pipe(plumber())
-      .pipe(concat('stylus.build.styl'))
+      .pipe(concat('app.build.styl'))
       .pipe(stylus({pretty: true}))
       .pipe(cssBase64({maxWeightResource: 1000000}))
       .pipe(gulp.dest(paths.stylesheetsBuildFolder))
