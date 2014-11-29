@@ -1,27 +1,30 @@
 'use strict'
 
-CONFIG = require('./config')
+CONFIG = require './config'
 
-express = require('express')
-mongoose = require('mongoose')
+express = require 'express'
+mongoose = require 'mongoose'
 
-subdomain = require('express-subdomain')
-bodyParser = require('body-parser')
-session = require('express-session')
-flash = require('connect-flash')
-compression = require('compression')
-passport = require('./api/auth/passport')
-MongoStore = require('connect-mongo')(session)
+subdomain = require 'express-subdomain'
+bodyParser = require 'body-parser'
+session = require 'express-session'
+flash = require 'connect-flash'
+compression = require 'compression'
+passport = require './api/auth/passport'
+connectMongo = require 'connect-mongo'
 
-clientRouter = require('./router/client-router')
-managerRouter = require('./router/manager-router')
-apiRouter = require('./router/api-router')
+path = require 'path'
+
+clientRouter = require './router/client-router'
+managerRouter = require './router/manager-router'
+apiRouter = require './router/api-router'
 
 app = express()
 
+MongoStore = connectMongo(session)
 mongoose.connect(CONFIG.DATABASE_URL)
 
-app.use compression
+app.use compression()
 app.use bodyParser.json()
 app.use bodyParser.urlencoded
   extended: true
@@ -37,8 +40,8 @@ app.use passport.initialize()
 app.use passport.session()
 app.use flash()
 
-app.use '/static/client', express.static(CONFIG.CLIENT.STATIC_FILES_PATH)
-app.use '/static/manager', express.static(CONFIG.MANAGER.STATIC_FILES_PATH)
+app.use '/static/client', express.static(path.join __dirname, '..', CONFIG.CLIENT.STATIC_FILES_PATH)
+app.use '/static/manager', express.static(path.join __dirname, '..', CONFIG.MANAGER.STATIC_FILES_PATH)
 
 app.use subdomain('api', apiRouter)
 app.use subdomain('manager', managerRouter)

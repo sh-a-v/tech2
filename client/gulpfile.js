@@ -2,6 +2,7 @@
 
 var
   gulp = require('gulp'),
+  coffee = require('gulp-coffee'),
   stylus = require('gulp-stylus'),
   jade = require('gulp-jade'),
   concat = require('gulp-concat'),
@@ -20,12 +21,12 @@ var
   stylesheetsSrcPath = 'src/stylesheets/',
   scriptLibSrcPath = 'src/scripts/lib/',
   scriptAppSrcPath = 'src/scripts/app/',
+  templatesClientSideSrcPath = 'src/templates/client-side/',
+  templatesServerSideSrcPath = 'src/templates/server-side/',
 
   paths = {
     stylesheetsBuildFolder: 'build/stylesheets/',  /* Stylesheets */
-    stylusFiles: [
-      stylesheetsSrcPath + 'constants/*.styl',
-
+    stylesheetsFiles: [
       stylesheetsSrcPath + 'general/*.styl',
       stylesheetsSrcPath + 'general/**/*.styl',
 
@@ -33,7 +34,7 @@ var
       stylesheetsSrcPath + '**/*.styl'
     ],
 
-    scriptsLibBuildFolder: 'scripts/',  /* Scripts */
+    scriptsLibBuildFolder: 'build/scripts/',  /* Scripts */
     scriptsLibFiles: [
       scriptLibSrcPath + 'angular/angular.min.js',
       scriptLibSrcPath + 'angular/*.js',
@@ -41,32 +42,35 @@ var
       scriptLibSrcPath + '*.js',
       scriptLibSrcPath + '**/*.js'
     ],
-    scriptsAppFolder: 'scripts/app/',
+
+    scriptsAppBuildFolder: 'build/scripts/',
     scriptsAppFiles: [
-      'scripts/app/init.js',
+      scriptAppSrcPath + 'init.coffee',
 
-      'scripts/app/general/*.js',
-      'scripts/app/general/**/*.js',
+      scriptAppSrcPath + 'general/*.coffee',
+      scriptAppSrcPath + 'general/**/*.coffee',
 
-      'scripts/app/module.js',
-      'scripts/app/**/module.js',
-      'scripts/app/*.js',
-      'scripts/app/**/*.js',
-
-      '!scripts/lib/*'
+      scriptAppSrcPath + 'module.coffee',
+      scriptAppSrcPath + '**/module.coffee',
+      scriptAppSrcPath + '*.coffee',
+      scriptAppSrcPath + '**/*.coffee'
     ],
 
-    templatesFolder: 'templates/',  /* Templates */
-    templatesFiles: [
-      'templates/client-side/*.html',
-      'templates/client-side/**/*.html'
+    templatesBuildFolder: 'build/templates/',  /* Templates */
+    templatesServerSideFiles: [
+      templatesServerSideSrcPath + '*.jade',
+      templatesServerSideSrcPath + '**/*.jade'
+    ],
+    templatesClientSideFiles: [
+      templatesClientSideSrcPath + '*.jade',
+      templatesClientSideSrcPath + '**/*.jade'
     ]
   };
 
 
 gulp
-  .task('stylus', function () {  /* Stylesheets */
-    return gulp.src(paths.stylusFiles)
+  .task('stylesheets', function () {  /* Stylesheets */
+    return gulp.src(paths.stylesheetsFiles)
       .pipe(plumber())
       .pipe(concat('stylus.build.styl'))
       .pipe(stylus({pretty: true}))
@@ -77,36 +81,44 @@ gulp
       .pipe(gulp.dest(paths.stylesheetsBuildFolder));
   })
 
-  .task('templates', function () {  /* Templates */
-    return gulp.src(paths.templatesFiles)
-      .pipe(plumber())
-      .pipe(templateCache({module: 'app', filename: 'client-side.build.js'}))
-      .pipe(gulp.dest(paths.templatesFolder));
-  })
-
-  .task('js-lib', function () {  /* Scripts lib */
+  .task('scripts-lib', function () {  /* Scripts lib */
     return gulp.src(paths.scriptsLibFiles)
       .pipe(plumber())
       .pipe(concat('lib.build.min.js'))
-      .pipe(gulp.dest(paths.scriptsFolder));
+      //.pipe(uglify({mangle: false}))
+      .pipe(gulp.dest(paths.scriptsLibBuildFolder));
   })
 
-  .task('js-app', function () {  /* Scripts app */
+  .task('scripts-app', function () {  /* Scripts app */
     return gulp.src(paths.scriptsAppFiles)
       .pipe(plumber())
-      .pipe(concat('app.build.js'))
-      .pipe(gulp.dest(paths.scriptsFolder))
+      .pipe(concat('app.build.coffee'))
+      .pipe(coffee())
+      .pipe(gulp.dest(paths.scriptsAppBuildFolder))
       .pipe(uglify({mangle: false}))
       .pipe(rename({suffix: '.min'}))
-      .pipe(gulp.dest(paths.scriptsFolder));
+      .pipe(gulp.dest(paths.scriptsAppBuildFolder));
+  })
+
+  .task('templates-client', function () {  /* Templates */
+    return gulp.src(paths.templatesClientSideFiles)
+      .pipe(plumber())
+      .pipe(jade())
+      .pipe(templateCache({module: 'app', filename: 'client-side.build.js'}))
+      .pipe(gulp.dest(paths.templatesBuildFolder));
+  })
+
+  .task('templates-server', function () {
+    return gulp.src(paths.templatesServerSideFiles)
+      .pipe(jade())
+      .pipe(gulp.dest(paths.templatesBuildFolder));
   });
 
 
 gulp
   .task('browser-sync', function() {
     browserSync({
-      proxy: '192.168.1.250:1337',
-      host: '192.168.1.250',
+      proxy: 'localhost:1337',
       port: '3001',
       open: false
     });
@@ -115,16 +127,27 @@ gulp
 
 gulp
   .task('build', function () {  /* Build */
-    gulp.start('stylus');
-    gulp.start('templates');
-    gulp.start('js-lib');
-    gulp.start('js-app');
+    gulp.start('templates-server');
+    gulp.start('templates-client');
+    gulp.start('stylesheets');
+    gulp.start('scripts-lib');
+    gulp.start('scripts-app');
   })
 
-  .task('watch', ['browser-sync'], function() {  /* Watch */
-    gulp.watch(paths.stylusFiles, ['stylus', browserSync.reload]);
-    gulp.watch(paths.templatesFiles, ['templates', browserSync.reload]);
-    gulp.watch(paths.scriptsAppFiles, ['js-app', browserSync.reload]);
+  .task('watch', function() {  /* Watch */
+    gulp.watch(paths.templatesServerSideFiles);
+    gulp.watch(paths.templatesClientSideFiles);
+    gulp.watch(paths.stylesheetsFiles);
+    gulp.watch(paths.scriptsAppFiles);
+    gulp.watch(paths.scriptsLibFiles);
   })
 
-  .task('default', ['build', 'watch']);  /* Default */
+  .task('sync', ['browser-sync'], function() {  /* Watch */
+    gulp.watch(paths.templatesServerSideFiles, ['templates-server', browserSync.reload]);
+    gulp.watch(paths.templatesClientSideFiles, ['templates-client', browserSync.reload]);
+    gulp.watch(paths.stylesheetsFiles, ['stylesheets', browserSync.reload]);
+    gulp.watch(paths.scriptsAppFiles, ['scripts-app', browserSync.reload]);
+    gulp.watch(paths.scriptsLibFiles, ['scripts-lib', browserSync.reload]);
+  })
+
+  .task('default', ['build', 'sync']);  /* Default */
