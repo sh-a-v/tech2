@@ -4,6 +4,31 @@
   left 0
 
   flex-display flex
-  flex 0 0 55px
+  flex-direction row
+  flex-justify-content space-between
+  flex-align-items center
+  flex 0 0 header-height
+  box-sizing border-box
 
-  background-color black-05
+.header-logo
+  flex-display flex
+  flex-align-items center
+  height 100%
+
+.header-logo-icon
+  width logo-size = header-height - 20
+  height logo-size
+  margin 0 10px
+  box-sizing border-box
+
+  border-radius logo-size
+  background-color grey-1
+
+.header-logo-label
+  font-size 24px
+
+.header-controls
+  width 300px
+  height 50px
+
+  background-color grey-1

@@ -39,6 +39,7 @@
       restrict: 'EA',
       templateUrl: 'menu.html',
       controller: 'MenuCtrl',
+      scope: {},
       link: function(scope, el, attrs) {}
     };
   });
