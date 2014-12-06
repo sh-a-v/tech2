@@ -30,6 +30,9 @@ var
       stylesheetsSrcPath + 'mixins/*.styl',
       stylesheetsSrcPath + 'mixins/**/*.styl',
 
+      stylesheetsSrcPath + 'elements/*.styl',
+      stylesheetsSrcPath + 'elements/**/*.styl',
+
       stylesheetsSrcPath + 'general/*.styl',
       stylesheetsSrcPath + 'general/**/*.styl',
 
@@ -138,11 +141,11 @@ gulp
   })
 
   .task('watch', function() {  /* Watch */
-    gulp.watch(paths.templatesServerSideFiles);
-    gulp.watch(paths.templatesClientSideFiles);
-    gulp.watch(paths.stylesheetsFiles);
-    gulp.watch(paths.scriptsAppFiles);
-    gulp.watch(paths.scriptsLibFiles);
+    gulp.watch(paths.templatesServerSideFiles, ['templates-server']);
+    gulp.watch(paths.templatesClientSideFiles, ['templates-client']);
+    gulp.watch(paths.stylesheetsFiles, ['stylesheets']);
+    gulp.watch(paths.scriptsAppFiles, ['scripts-app']);
+    gulp.watch(paths.scriptsLibFiles, ['scripts-lib']);
   })
 
   .task('sync', ['browser-sync'], function() {  /* Watch */

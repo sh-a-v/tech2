@@ -1,11 +1,33 @@
 .icon
-  position relative
-  display inline-block
-  vertical-align middle
-  background 100% no-repeat
-  background-size 100%
-  width 24px
-  height 24px
+  background-size 24px 24px
+  background-repeat no-repeat
+  background-position center
 
 .icon-logo
   background-image url('../../images/icons/logo.png')
+
+.icon-search
+  background-image url('../../images/icons/search-disable.png')
+  .active &
+    background-image url("../../images/icons/search-active.png")
+
+.icon-catalog
+  background-image url('../../images/icons/catalog-disable.png')
+  .active &
+    background-image url("../../images/icons/catalog-active.png")
+
+.icon-cabinet
+  background-image url('../../images/icons/cabinet-disable.png')
+  .active &
+    background-image url("../../images/icons/cabinet-active.png")
+
+.icon-user
+  background-image url('../../images/icons/user-inactive.png')
+  &.active
+    background-image url("../../images/icons/user-active.png")
+
+.icon-filter
+  background-image url('../../images/icons/filter-inactive.png')
+  &.active
+    background-image url("../../images/icons/filter-active.png")
+

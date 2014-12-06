@@ -8,12 +8,15 @@
     $stateProvider.state('index', {
       url: '/',
       title: 'Engineerium'
+    }).state('cabinet', {
+      url: '/cabinet',
+      title: 'Кабинет'
     }).state('catalog', {
       url: '/catalog',
       title: 'Каталог'
-    }).state('collections', {
-      url: '/collections',
-      title: 'Коллекции'
+    }).state('search', {
+      url: '/search',
+      title: 'Поиск'
     });
     $locationProvider.html5Mode({
       enabled: true,
@@ -37,7 +40,6 @@
   app.directive('menu', function() {
     return {
       restrict: 'EA',
-      templateUrl: 'menu.html',
       controller: 'MenuCtrl',
       scope: {},
       link: function(scope, el, attrs) {}
