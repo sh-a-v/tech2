@@ -110,7 +110,7 @@ gulp
     return gulp.src(paths.templatesClientSideFiles)
       .pipe(plumber())
       .pipe(jade())
-      .pipe(templateCache({module: 'app', filename: 'client-side.build.js'}))
+      .pipe(templateCache({module: 'engineerium', filename: 'client-side.build.js'}))
       .pipe(gulp.dest(paths.templatesBuildFolder));
   })
 

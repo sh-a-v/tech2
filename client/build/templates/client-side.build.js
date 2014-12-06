@@ -1,1 +1,1 @@
-angular.module("app").run(["$templateCache", function($templateCache) {$templateCache.put("index.html","");}]);
+angular.module("engineerium").run(["$templateCache", function($templateCache) {$templateCache.put("index.html","");}]);

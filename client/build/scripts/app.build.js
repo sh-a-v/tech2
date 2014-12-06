@@ -2,7 +2,7 @@
   'use strict';
   var app;
 
-  app = angular.module('app', ['ui.router', 'ngResource', 'ngTouch']);
+  app = angular.module('engineerium', ['ui.router', 'ngResource', 'ngTouch', 'popup']);
 
   app.config(function($stateProvider, $locationProvider, $resourceProvider, $httpProvider) {
     $stateProvider.state('index', {
@@ -42,6 +42,38 @@
       restrict: 'EA',
       controller: 'MenuCtrl',
       scope: {},
+      link: function(scope, el, attrs) {}
+    };
+  });
+
+  app.popup = angular.module('popup', []);
+
+  app.popup.controller('PopupCtrl', function($scope) {
+    this.active = false;
+    this.activate = function() {
+      this.active = true;
+      this._broadcastPopupActivated();
+      return console.log('activate');
+    };
+    this.deactivate = function() {
+      this.active = false;
+      return this._broadcastPopupDeactivated();
+    };
+    this.isActive = function() {
+      return this.active;
+    };
+    this._broadcastPopupActivated = function() {
+      return $scope.$broadcast('popup:activated');
+    };
+    this._broadcastPopupDeactivated = function() {
+      return $scope.$broadcast('popup:deactivated');
+    };
+  });
+
+  app.popup.directive('popup', function() {
+    return {
+      restrict: 'E',
+      controller: 'PopupCtrl',
       link: function(scope, el, attrs) {}
     };
   });

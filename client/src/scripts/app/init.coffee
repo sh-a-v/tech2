@@ -1,6 +1,6 @@
 'use strict'
 
-app = angular.module 'app', ['ui.router', 'ngResource', 'ngTouch']
+app = angular.module 'engineerium', ['ui.router', 'ngResource', 'ngTouch', 'popup']
 
 app.config ($stateProvider, $locationProvider, $resourceProvider, $httpProvider) ->
   $stateProvider
