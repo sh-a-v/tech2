@@ -1,7 +1,9 @@
-app.popup.controller 'PopupCtrl', ($scope) ->
-  this.active = false
+app.popup.controller 'PopupCtrl', ($rootScope, $scope, popupService) ->
+  @service = popupService
 
-  this.activate = ->
+  @active = @service.active
+
+  @activate = ->
     this.active = true
     this._broadcastPopupActivated()
     console.log 'activate'

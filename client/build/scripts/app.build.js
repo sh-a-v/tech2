@@ -46,10 +46,21 @@
     };
   });
 
+  app.controller('HeaderControlsCtrl', function($rootScope, $scope) {});
+
+  app.directive('HeaderControls', function() {
+    return {
+      restrict: 'E',
+      controller: 'HeaderControlsCtrl',
+      link: function(scope, el, attrs) {}
+    };
+  });
+
   app.popup = angular.module('popup', []);
 
-  app.popup.controller('PopupCtrl', function($scope) {
-    this.active = false;
+  app.popup.controller('PopupCtrl', function($rootScope, $scope, popupService) {
+    this.service = popupService;
+    this.active = this.service.active;
     this.activate = function() {
       this.active = true;
       this._broadcastPopupActivated();
@@ -76,6 +87,31 @@
       controller: 'PopupCtrl',
       link: function(scope, el, attrs) {}
     };
+  });
+
+  app.popup.factory('popupService', function($rootScope) {
+    var PopupService;
+    PopupService = (function() {
+      function PopupService() {}
+
+      PopupService.prototype.active = false;
+
+      PopupService.prototype.activate = function() {
+        return this.active = true;
+      };
+
+      PopupService.prototype.deactivate = function() {
+        return this.active = false;
+      };
+
+      PopupService.prototype.isActive = function() {
+        return this.active;
+      };
+
+      return PopupService;
+
+    })();
+    return new PopupService();
   });
 
 }).call(this);
