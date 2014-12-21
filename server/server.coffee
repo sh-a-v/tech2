@@ -3,6 +3,7 @@
 CONFIG = require './config'
 
 express = require 'express'
+cors = require 'cors'
 mongoose = require 'mongoose'
 
 subdomain = require 'express-subdomain'
@@ -24,6 +25,7 @@ app = express()
 MongoStore = connectMongo(session)
 mongoose.connect(CONFIG.DATABASE_URL)
 
+app.use cors()
 app.use compression()
 app.use bodyParser.json()
 app.use bodyParser.urlencoded

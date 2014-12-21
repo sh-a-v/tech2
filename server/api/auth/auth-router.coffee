@@ -38,9 +38,9 @@ authRouter.get '/auth/', (req, res) ->
     success: true
     user:
       authentication: req.isAuthenticated()
-  response.user.admin = true if req.user.isAdmin()
-  response.user.publisher = true if req.user.isPublisher()
+  response.user.admin = true if req.user && req.user.isAdmin()
+  response.user.publisher = true if req.user && req.user.isPublisher()
 
-  res.json(response)
+  res.send(response)
 
 module.exports = authRouter

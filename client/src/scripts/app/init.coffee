@@ -1,6 +1,6 @@
 'use strict'
 
-app = angular.module 'engineerium', ['ui.router', 'ngResource', 'ngTouch', 'popup']
+app = angular.module 'engineerium', ['ui.router', 'ngResource', 'ngTouch', 'popup', 'user']
 
 app.config ($stateProvider, $locationProvider, $resourceProvider, $httpProvider) ->
   $stateProvider
@@ -29,3 +29,6 @@ app.config ($stateProvider, $locationProvider, $resourceProvider, $httpProvider)
     .defaults.stripTrailingSlashes = true
 
   return
+
+app.urls =
+  api: 'http://api.engineerium.io:1337'
