@@ -15,19 +15,19 @@ authRouter.post '/auth/', (req, res, next) ->
       success: !err
       user:
         authentication: req.isAuthenticated()
-    response.user.admin = true if user and user.isAdmin()
-    response.user.publisher = true if user and user.isPublisher()
+    response.user.admin = true if user && user.isAdmin()
+    response.user.publisher = true if user && user.isPublisher()
 
     res.json(response)
   )(req, res, next)
 
 authRouter.put '/auth/', (req, res, next) ->
   passport.authenticate('local-recovery', (err, user, newPassword) ->
-    if !err and user and user.local.email
+    if !err && user && user.local.email
       mail = recoveryPasswordMail(user.local.email, newPassword)
 
     response =
-      success: !err and !!mail and mail.success
+      success: !err && !!mail && mail.success
       userExist: !!user
 
     res.json(response)
@@ -41,6 +41,14 @@ authRouter.get '/auth/', (req, res) ->
   response.user.admin = true if req.user && req.user.isAdmin()
   response.user.publisher = true if req.user && req.user.isPublisher()
 
-  res.send(response)
+  res.json(response)
+
+authRouter.delete '/auth/', (req, res) ->
+  req.logOut()
+
+  response =
+    success: true
+
+  res.json(response)
 
 module.exports = authRouter
