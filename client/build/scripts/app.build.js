@@ -2,7 +2,7 @@
   'use strict';
   var app;
 
-  app = angular.module('engineerium', ['ui.router', 'ngResource', 'ngTouch', 'popup', 'user']);
+  app = angular.module('engineerium', ['ui.router', 'ngResource', 'ngTouch', 'user']);
 
   app.config(function($stateProvider, $locationProvider, $resourceProvider, $httpProvider) {
     $stateProvider.state('index', {
@@ -39,17 +39,6 @@
     };
   });
 
-  app.controller('MenuCtrl', function($scope) {});
-
-  app.directive('menu', function() {
-    return {
-      restrict: 'EA',
-      controller: 'MenuCtrl',
-      scope: {},
-      link: function(scope, el, attrs) {}
-    };
-  });
-
   app.controller('HeaderControlsCtrl', function($rootScope, $scope) {});
 
   app.directive('HeaderControls', function() {
@@ -60,17 +49,11 @@
     };
   });
 
-  app.popup = angular.module('popup', []);
-
-  app.user = angular.module('user', []);
-
-  app.popup.controller('PopupCtrl', function($rootScope, $scope, popupService) {
-    this.service = popupService;
-    this.active = this.service.active;
+  app.controller('PopupCtrl', function($rootScope, $scope) {
+    this.active = false;
     this.activate = function() {
       this.active = true;
-      this._broadcastPopupActivated();
-      return console.log('activate');
+      return this._broadcastPopupActivated();
     };
     this.deactivate = function() {
       this.active = false;
@@ -87,50 +70,105 @@
     };
   });
 
-  app.popup.directive('popup', function() {
+  app.directive('popup', function() {
     return {
-      restrict: 'E',
+      restrict: 'EA',
       controller: 'PopupCtrl',
+      controllerAs: 'popupCtrl',
+      scope: {},
+      transclude: true,
+      templateUrl: 'general/popup.html',
+      link: function($scope, el, attrs) {
+        var show;
+        show = function() {
+          return console.log('el', el);
+        };
+        $scope.$on('popup:activated', function() {
+          return show();
+        });
+      }
+    };
+  });
+
+  app.controller('MenuCtrl', function($scope) {});
+
+  app.directive('menu', function() {
+    return {
+      restrict: 'EA',
+      controller: 'MenuCtrl',
+      scope: {},
       link: function(scope, el, attrs) {}
     };
   });
 
-  app.popup.factory('popupService', function($rootScope) {
-    var PopupService;
-    PopupService = (function() {
-      function PopupService() {}
+  app.user = angular.module('user', []);
 
-      PopupService.prototype.active = false;
-
-      PopupService.prototype.activate = function() {
-        return this.active = true;
-      };
-
-      PopupService.prototype.deactivate = function() {
-        return this.active = false;
-      };
-
-      PopupService.prototype.isActive = function() {
-        return this.active;
-      };
-
-      return PopupService;
-
-    })();
-    return new PopupService();
+  app.user.controller('UserAuthCtrl', function($rootScope, $scope) {
+    return this.activate = function() {
+      return console.log('yeeeeee');
+    };
   });
 
-  app.user.controller('UserControlCtrl', function($rootScope, $scope) {});
+  app.user.directive('userAuth', function() {
+    return {
+      restrict: 'EA',
+      require: '^popup',
+      controller: 'UserAuthCtrl',
+      controllerAs: 'userAuthCtrl',
+      link: function($scope, el, attrs, popupCtrl) {
+        $scope.$on('user:authActivate', (function(_this) {
+          return function() {
+            return popupCtrl.activate();
+          };
+        })(this));
+      }
+    };
+  });
 
   app.user.directive('userControl', function() {
     return {
       restrict: 'EA',
       controller: 'UserCtrl',
+      controllerAs: 'userCtrl',
+      templateUrl: 'user/user-control.html',
       link: function($scope, el, attrs) {}
     };
   });
 
+  app.user.controller('UserProfileCtrl', function($rootScope, $scope) {});
+
+  app.user.directive('userProfile', function() {
+    return {
+      restrict: 'EA',
+      require: '^popup',
+      controller: 'UserProfileCtrl',
+      controllerAs: 'userProfileCtrl',
+      link: function($scope, el, attrs, popupCtrl) {
+        $scope.$on('user:profileActivate', (function(_this) {
+          return function() {
+            return popupCtrl.activate();
+          };
+        })(this));
+      }
+    };
+  });
+
   app.user.controller('UserCtrl', function($rootScope, $scope, userService) {
+    this.activate = function() {
+      if (userService.isAuthenticated()) {
+        return this._broadcastUserProfileActivate();
+      } else {
+        return this._broadcastUserAuthActivate();
+      }
+    };
+    this._broadcastUserAuthActivate = function() {
+      console.log('user:authActivate');
+      return $scope.$broadcast('user:authActivate');
+    };
+    this._broadcastUserProfileActivate = function() {
+      console.log('user:profileActivate');
+      return $scope.$broadcast('user:profileActivate');
+    };
     return userService.checkAuthentication();
   });
 

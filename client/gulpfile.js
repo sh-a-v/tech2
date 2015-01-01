@@ -67,9 +67,23 @@ var
       templatesServerSideSrcPath + '*.jade',
       templatesServerSideSrcPath + '**/*.jade'
     ],
+    templatesServerSideFilesForBuild: [
+      templatesServerSideSrcPath + '*.jade',
+      templatesServerSideSrcPath + '**/*.jade',
+
+      '!' + templatesServerSideSrcPath + '_*.jade',
+      '!' + templatesServerSideSrcPath + '**/_*.jade'
+    ],
     templatesClientSideFiles: [
       templatesClientSideSrcPath + '*.jade',
       templatesClientSideSrcPath + '**/*.jade'
+    ],
+    templatesClientSideFilesForBuild: [
+      templatesClientSideSrcPath + '*.jade',
+      templatesClientSideSrcPath + '**/*.jade',
+
+      '!' + templatesClientSideSrcPath + '_*.jade',
+      '!' + templatesClientSideSrcPath + '**/_*.jade'
     ]
   };
 
@@ -107,7 +121,7 @@ gulp
   })
 
   .task('templates-client', function () {  /* Templates */
-    return gulp.src(paths.templatesClientSideFiles)
+    return gulp.src(paths.templatesClientSideFilesForBuild)
       .pipe(plumber())
       .pipe(jade())
       .pipe(templateCache({module: 'engineerium', filename: 'client-side.build.js'}))
@@ -115,7 +129,7 @@ gulp
   })
 
   .task('templates-server', function () {
-    return gulp.src(paths.templatesServerSideFiles)
+    return gulp.src(paths.templatesServerSideFilesForBuild)
       .pipe(jade())
       .pipe(gulp.dest(paths.templatesBuildFolder));
   });

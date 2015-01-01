@@ -8,10 +8,9 @@ html(lang='ru', ng-app='engineerium')
     link(rel='stylesheet', href='/static/client/stylesheets/app.build.min.css')
   body
     app-container.app-container
-      include ./header
-      include ./menu
-      include ./content
-      include ./popup
+      include ./_header
+      include ./_menu
+      include ./_content
 
     script(src='/static/client/scripts/lib.build.min.js')
     script(src='/static/client/scripts/app.build.js')
