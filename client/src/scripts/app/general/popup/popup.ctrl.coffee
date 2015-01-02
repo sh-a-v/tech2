@@ -9,6 +9,10 @@ app.controller 'PopupCtrl', ($rootScope, $scope) ->
     @active = false
     @_broadcastPopupDeactivated()
 
+  @stopPropagation = ($event) ->
+    $event.stopPropagation()
+    $event.preventDefault()
+
   @isActive = ->
     @active
 

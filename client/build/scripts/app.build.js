@@ -59,6 +59,10 @@
       this.active = false;
       return this._broadcastPopupDeactivated();
     };
+    this.stopPropagation = function($event) {
+      $event.stopPropagation();
+      return $event.preventDefault();
+    };
     this.isActive = function() {
       return this.active;
     };
@@ -74,7 +78,7 @@
     return {
       restrict: 'EA',
       controller: 'PopupCtrl',
-      controllerAs: 'popupCtrl',
+      controllerAs: 'popup',
       scope: {},
       transclude: true,
       templateUrl: 'general/popup.html',
@@ -154,6 +158,13 @@
   });
 
   app.user.controller('UserCtrl', function($rootScope, $scope, userService) {
+    this.initialize = function() {
+      this.setEventListeners();
+      return userService.checkAuthentication();
+    };
+    this.setEventListeners = function() {
+      return $rootScope.$on('user:activate', this.activate);
+    };
     this.activate = function() {
       if (userService.isAuthenticated()) {
         return this._broadcastUserProfileActivate();
@@ -162,14 +173,12 @@
       }
     };
     this._broadcastUserAuthActivate = function() {
-      console.log('user:authActivate');
       return $scope.$broadcast('user:authActivate');
     };
     this._broadcastUserProfileActivate = function() {
-      console.log('user:profileActivate');
       return $scope.$broadcast('user:profileActivate');
     };
-    return userService.checkAuthentication();
+    return this.initialize();
   });
 
   app.user.factory('authResource', function($resource) {

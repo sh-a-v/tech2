@@ -1,7 +1,7 @@
 app.directive 'popup', ->
   restrict: 'EA'
   controller: 'PopupCtrl'
-  controllerAs: 'popupCtrl'
+  controllerAs: 'popup'
   scope: {}
   transclude: true
   templateUrl: 'general/popup.html'
