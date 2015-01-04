@@ -4,5 +4,5 @@ app.user.directive 'userProfile', ->
   controller: 'UserProfileCtrl'
   controllerAs: 'userProfileCtrl'
   link: ($scope, el, attrs, popupCtrl) ->
-    $scope.$on('user:profileActivate', => popupCtrl.activate())
+    $scope.$on 'user:profileActivate', => popupCtrl.activate()
     return

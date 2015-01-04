@@ -10,5 +10,5 @@ app.directive 'popup', ->
       console.log 'el', el
 
 
-    $scope.$on('popup:activated', -> show())
+    $scope.$on 'popup:activated', show
     return

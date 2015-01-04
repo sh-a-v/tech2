@@ -4,5 +4,5 @@ app.user.directive 'userAuth', ->
   controller: 'UserAuthCtrl'
   controllerAs: 'userAuthCtrl'
   link: ($scope, el, attrs, popupCtrl) ->
-    $scope.$on('user:authActivate', => popupCtrl.activate())
+    $scope.$on 'user:authActivate', => popupCtrl.activate()
     return

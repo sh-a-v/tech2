@@ -29,22 +29,96 @@
     api: 'http://api.engineerium.io:1337'
   };
 
-  app.controller('AppContainerCtrl', function($scope) {});
-
-  app.directive('appContainer', function() {
-    return {
-      restrict: 'EA',
-      controller: 'AppContainerCtrl',
-      link: function(scope, el, attrs) {}
-    };
-  });
-
   app.controller('HeaderControlsCtrl', function($rootScope, $scope) {});
 
   app.directive('HeaderControls', function() {
     return {
       restrict: 'E',
       controller: 'HeaderControlsCtrl',
+      link: function(scope, el, attrs) {}
+    };
+  });
+
+  app.controller('AppContainerCtrl', function($rootScope, $scope, $window) {
+    this.initialize = function() {
+      return this.setEventListeners();
+    };
+    this.setEventListeners = function() {};
+    return this.initialize();
+  });
+
+  app.directive('appContainer', function() {
+    return {
+      restrict: 'EA',
+      controller: 'AppContainerCtrl',
+      controllerAs: 'app',
+      link: function(scope, el, attrs) {}
+    };
+  });
+
+  app.controller('AppSizeCtrl', function($rootScope, $scope, $window, appSizeService) {
+    this.initialize = function() {
+      return this.setEventListeners();
+    };
+    this.setEventListeners = function() {
+      return angular.element($window).on('resize', this.resize);
+    };
+    this.resize = function() {
+      appSizeService.updateSize($window.innerWidth, $window.innerHeight);
+      return this._broadcastAppResized();
+    };
+    this._broadcastAppResized = function() {
+      return $rootScope.$broadcast('app:resized');
+    };
+    return this.initialize();
+  });
+
+  app.directive('appSize', function() {
+    return {
+      restrict: 'A',
+      controller: 'AppSizeCtrl',
+      controllerAs: 'appSize',
+      link: function($scope, el, attrs) {}
+    };
+  });
+
+  app.service('appSizeService', function($rootScope) {
+    return {
+      minDesktopWidth: 1025,
+      minTabletWidth: 600,
+      maxTabletWidth: 1024,
+      minPhoneWidth: 0,
+      maxPhoneWidth: 599,
+      size: {
+        width: 0,
+        height: 0
+      },
+      updateSize: function(width, height) {
+        this.size.width = width;
+        return this.size.height = height;
+      },
+      getSize: function() {
+        return this.size;
+      },
+      isDesktop: function() {
+        return this.size.width >= this.minDesktopWidth;
+      },
+      isTablet: function() {
+        return this.size.width >= this.minTabletWidth && this.size.width <= this.maxTabletWidth;
+      },
+      isPhone: function() {
+        return this.size.width <= this.maxPhoneWidth;
+      }
+    };
+  });
+
+  app.controller('MenuCtrl', function($scope) {});
+
+  app.directive('menu', function() {
+    return {
+      restrict: 'EA',
+      controller: 'MenuCtrl',
+      scope: {},
       link: function(scope, el, attrs) {}
     };
   });
@@ -87,21 +161,8 @@
         show = function() {
           return console.log('el', el);
         };
-        $scope.$on('popup:activated', function() {
-          return show();
-        });
+        $scope.$on('popup:activated', show);
       }
-    };
-  });
-
-  app.controller('MenuCtrl', function($scope) {});
-
-  app.directive('menu', function() {
-    return {
-      restrict: 'EA',
-      controller: 'MenuCtrl',
-      scope: {},
-      link: function(scope, el, attrs) {}
     };
   });
 
