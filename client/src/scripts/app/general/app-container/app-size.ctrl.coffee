@@ -1,9 +1,10 @@
 app.controller 'AppSizeCtrl', ($rootScope, $scope, $window, appSizeService) ->
   @initialize = ->
     @setEventListeners()
+    @resize()
 
   @setEventListeners = ->
-    angular.element($window).on 'resize', @resize
+    angular.element($window).on 'resize', => @resize()
 
   @resize = ->
     appSizeService.updateSize($window.innerWidth, $window.innerHeight)

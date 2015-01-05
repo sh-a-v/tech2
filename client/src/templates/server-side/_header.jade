@@ -2,6 +2,8 @@ header.header
   .header-logo
     .header-logo-icon.icon
     .header-logo-label Engineerium
-  .header-controls
-    .header-control.button.button-round.icon.icon-filter
-    user-control
+  header-controls.header-controls(ng-class='{visible:headerControls.isVisible(), collapsed:headerControls.isCollapsed()}')
+      user-control.header-control.button.button-round.icon.icon-user(ng-click='user.activate()')
+      filter-control.header-control.button.button-round.icon.icon-filter(ng-click='filter.activate()')
+      .header-control.expanded.button.button-round.icon(ng-click='headerControls.collapse()')
+      .header-control.collapsed.button-round.icon(ng-click='headerControls.expand()')

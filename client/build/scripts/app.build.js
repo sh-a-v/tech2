@@ -2,7 +2,7 @@
   'use strict';
   var app;
 
-  app = angular.module('engineerium', ['ui.router', 'ngResource', 'ngTouch', 'user']);
+  app = angular.module('engineerium', ['ui.router', 'ngResource', 'ngTouch', 'user', 'filter']);
 
   app.config(function($stateProvider, $locationProvider, $resourceProvider, $httpProvider) {
     $stateProvider.state('index', {
@@ -29,16 +29,6 @@
     api: 'http://api.engineerium.io:1337'
   };
 
-  app.controller('HeaderControlsCtrl', function($rootScope, $scope) {});
-
-  app.directive('HeaderControls', function() {
-    return {
-      restrict: 'E',
-      controller: 'HeaderControlsCtrl',
-      link: function(scope, el, attrs) {}
-    };
-  });
-
   app.controller('AppContainerCtrl', function($rootScope, $scope, $window) {
     this.initialize = function() {
       return this.setEventListeners();
@@ -58,10 +48,15 @@
 
   app.controller('AppSizeCtrl', function($rootScope, $scope, $window, appSizeService) {
     this.initialize = function() {
-      return this.setEventListeners();
+      this.setEventListeners();
+      return this.resize();
     };
     this.setEventListeners = function() {
-      return angular.element($window).on('resize', this.resize);
+      return angular.element($window).on('resize', (function(_this) {
+        return function() {
+          return _this.resize();
+        };
+      })(this));
     };
     this.resize = function() {
       appSizeService.updateSize($window.innerWidth, $window.innerHeight);
@@ -109,6 +104,97 @@
       isPhone: function() {
         return this.size.width <= this.maxPhoneWidth;
       }
+    };
+  });
+
+  app.controller('HeaderControlsCtrl', function($rootScope, $scope, $timeout, appSizeService) {
+    this.visible = false;
+    this.collapsed = false;
+    this.initialize = function() {
+      this.setEventListeners();
+      this.setCollapsed();
+      return this.activate();
+    };
+    this.setEventListeners = function() {
+      return $rootScope.$on('app:resized', (function(_this) {
+        return function() {
+          return _this.setCollapsed(true);
+        };
+      })(this));
+    };
+    this.setCollapsed = function(resize) {
+      this.collapsed = appSizeService.isPhone();
+      if (resize) {
+        return $scope.$apply();
+      }
+    };
+    this.activate = function() {
+      return $timeout(((function(_this) {
+        return function() {
+          return _this.visible = true;
+        };
+      })(this)), 400);
+    };
+    this.expand = function() {
+      if (this.isExpanded()) {
+        return;
+      }
+      return this.collapsed = false;
+    };
+    this.collapse = function() {
+      if (this.isCollapsed()) {
+        return;
+      }
+      return this.collapsed = true;
+    };
+    this.isVisible = function() {
+      return this.visible;
+    };
+    this.isExpanded = function() {
+      return !this.collapsed;
+    };
+    this.isCollapsed = function() {
+      return this.collapsed;
+    };
+    this._broadcastHeaderControlsExpanded = function() {
+      return $scope.$broadcast('headerControls:expanded');
+    };
+    this._broadcastHeaderControlsCollapsed = function() {
+      return $scope.$broadcast('headerControls:collapsed');
+    };
+    this._broadcastHeaderControlsReady = function() {
+      return $scope.$broadcast('headerControls:ready');
+    };
+    return this.initialize();
+  });
+
+  app.directive('headerControls', function() {
+    return {
+      restrict: 'E',
+      controller: 'HeaderControlsCtrl',
+      controllerAs: 'headerControls',
+      link: function($scope, el, attrs) {
+        var collapse, expand, show;
+        $scope.$on('headerControls:ready', show);
+        $scope.$on('headerControls:expanded', expand);
+        $scope.$on('headerControls:collapsed', collapse);
+        expand = function() {
+          return el.removeClass('collapsed');
+        };
+        collapse = function() {
+          return el.addClass('collapsed');
+        };
+        return show = function() {
+          return el.addClass('visible');
+        };
+      }
+    };
+  });
+
+  app.directive('header', function() {
+    return {
+      restrict: 'EA',
+      link: function($scope, el, attrs) {}
     };
   });
 
@@ -166,20 +252,40 @@
     };
   });
 
+  app.filter = angular.module('filter', []);
+
   app.user = angular.module('user', []);
 
-  app.user.controller('UserAuthCtrl', function($rootScope, $scope) {
-    return this.activate = function() {
-      return console.log('yeeeeee');
+  app.filter.directive('filterControl', function() {
+    return {
+      restrict: 'EA',
+      controller: 'FilterCtrl',
+      controllerAs: 'filter',
+      link: function($scope, el, attrs) {}
     };
+  });
+
+  app.filter.directive('filterGenres', function() {
+    return {
+      restrict: 'EA',
+      require: '^popup',
+      link: function($scope, el, attrs, popup) {}
+    };
+  });
+
+  app.filter.controller('FilterCtrl', function($rootScope, $scope) {
+    this.initialize = function() {
+      return this.setEventListeners();
+    };
+    this.setEventListeners = function() {};
+    this.activate = function() {};
+    return this.initialize();
   });
 
   app.user.directive('userAuth', function() {
     return {
       restrict: 'EA',
       require: '^popup',
-      controller: 'UserAuthCtrl',
-      controllerAs: 'userAuthCtrl',
       link: function($scope, el, attrs, popupCtrl) {
         $scope.$on('user:authActivate', (function(_this) {
           return function() {
@@ -194,20 +300,15 @@
     return {
       restrict: 'EA',
       controller: 'UserCtrl',
-      controllerAs: 'userCtrl',
-      templateUrl: 'user/user-control.html',
+      controllerAs: 'user',
       link: function($scope, el, attrs) {}
     };
   });
-
-  app.user.controller('UserProfileCtrl', function($rootScope, $scope) {});
 
   app.user.directive('userProfile', function() {
     return {
       restrict: 'EA',
       require: '^popup',
-      controller: 'UserProfileCtrl',
-      controllerAs: 'userProfileCtrl',
       link: function($scope, el, attrs, popupCtrl) {
         $scope.$on('user:profileActivate', (function(_this) {
           return function() {

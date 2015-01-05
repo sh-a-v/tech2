@@ -7,11 +7,15 @@
   flex-direction row
   flex-justify-content space-between
   flex-align-items center
+  flex-wrap nowrap
   flex 0 0 header-height-desktop
   box-sizing border-box
 
   @media media-phone
     flex 0 0 header-height-phone
+
+
+/* Logo */
 
 .header-logo
   flex-display flex
@@ -37,21 +41,66 @@
   @media media-phone
     font-size 22px
 
+
+/* Controls */
+
 .header-controls
-  flex-display flex
-  height 50px
-  padding-right 15px
+  position absolute
+  top 15px
+  right 0
+
+  max-width 100%
+  height header-control-width-desktop
+  padding-bottom 7px
+  overflow hidden
+
+  transition all 0.4s ease-in
+  transform translateZ(0)
+
+  &.visible
+    opacity 1
+
+  &.collapsed
+    max-width header-control-width-desktop + 15px
+    transition all 0.3s ease-out
 
   @media media-phone
-    height 40px
-    padding-right 10px
+    top 10px
+    height header-control-width-phone
+    opacity 0
+
+    &.collapsed
+      max-width header-control-width-phone + 10px
+
 
 .header-control
-  width 50px
-  height 50px
-  margin-left 15px
+  width header-control-width-desktop
+  height header-control-width-desktop
+  margin-right 15px
+  margin-bottom 7px
+
+  &.expanded
+    display none
+
+  &.collapsed
+    position absolute
+    top 0
+    left 0
+
+    display none
+    width 100%
+    height 100%
+
+    background-color transparent
+
+  .collapsed &
+    &.collapsed
+      display block
 
   @media media-phone
-    width 40px
-    height 40px
-    margin-left 10px
+    width header-control-width-phone
+    height header-control-width-phone
+    margin-right 10px
+
+    &.expanded
+      display inline-block

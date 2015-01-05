@@ -156,6 +156,9 @@ body {
   -ms-flex-align: center;
   -webkit-align-items: center;
   align-items: center;
+  -ms-flex-wrap: nowrap;
+  -webkit-flex-wrap: nowrap;
+  flex-wrap: nowrap;
   -ms-flex: 0 0 80px;
   -webkit-flex: 0 0 80px;
   flex: 0 0 80px;
@@ -170,6 +173,7 @@ body {
     flex: 0 0 60px;
   }
 }
+/* Logo */
 .header-logo {
   display: -ms-flexbox;
   display: -webkit-flex;
@@ -205,29 +209,74 @@ body {
     font-size: 22px;
   }
 }
+/* Controls */
 .header-controls {
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
+  position: absolute;
+  top: 15px;
+  right: 0;
+  max-width: 100%;
   height: 50px;
-  padding-right: 15px;
+  padding-bottom: 7px;
+  overflow: hidden;
+  -moz-transition: all 0.4s ease-in;
+  -o-transition: all 0.4s ease-in;
+  -webkit-transition: all 0.4s ease-in;
+  transition: all 0.4s ease-in;
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+.header-controls.visible {
+  opacity: 1;
+}
+.header-controls.collapsed {
+  max-width: 65px;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  -webkit-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
 }
 @media screen and (min-width: 0) and (max-width: 599px) {
   .header-controls {
+    top: 10px;
     height: 40px;
-    padding-right: 10px;
+    opacity: 0;
+  }
+  .header-controls.collapsed {
+    max-width: 50px;
   }
 }
 .header-control {
   width: 50px;
   height: 50px;
-  margin-left: 15px;
+  margin-right: 15px;
+  margin-bottom: 7px;
+}
+.header-control.expanded {
+  display: none;
+}
+.header-control.collapsed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+}
+.collapsed .header-control.collapsed {
+  display: block;
 }
 @media screen and (min-width: 0) and (max-width: 599px) {
   .header-control {
     width: 40px;
     height: 40px;
-    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .header-control.expanded {
+    display: inline-block;
   }
 }
 .menu {

@@ -1,6 +1,6 @@
 'use strict'
 
-app = angular.module 'engineerium', ['ui.router', 'ngResource', 'ngTouch', 'user']
+app = angular.module 'engineerium', ['ui.router', 'ngResource', 'ngTouch', 'user', 'filter']
 
 app.config ($stateProvider, $locationProvider, $resourceProvider, $httpProvider) ->
   $stateProvider
