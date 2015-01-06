@@ -1,7 +1,7 @@
 .menu
   position absolute
   top 0
-  left 0
+  left -1 * menu-width
   z-index 1
 
   flex-display flex
@@ -13,8 +13,11 @@
   overflow-x hidden
   overflow-y hidden
 
+  @media media-desktop
+    left 0
+
   @media media-phone
-    padding header-height-phone + 20 0 0
+    padding header-height-phone + 10 0 0
 
 .menu-items
   width 100%
@@ -22,6 +25,8 @@
   padding 0
 
 .menu-item
+  position relative
+
   flex-display flex
   flex-align-items center
   width 100%
@@ -34,15 +39,18 @@
   &.active
     color blue-1
 
+  @media media-phone
+    height 64px
+
 .menu-item-button
   width 50px
   height 50px
   margin 0 15px
   box-sizing border-box
 
-  background-size 24px
-
-  //.menu-item.active &
+  @media media-phone
+    width 40px
+    height 40px
 
 .menu-tem-label
   font-size 16px

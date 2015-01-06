@@ -2,16 +2,13 @@ app.directive 'headerControls', ->
   restrict: 'E'
   controller: 'HeaderControlsCtrl'
   controllerAs: 'headerControls'
-  link: ($scope, el, attrs) ->
-    $scope.$on 'headerControls:ready', show
-    $scope.$on 'headerControls:expanded', expand
-    $scope.$on 'headerControls:collapsed', collapse
+  link: ($scope, el, attrs, headerControls) ->
+    headerControls.view =
+      expand: ->
+        el.removeClass('collapsed').addClass('expanded')
 
-    expand = ->
-      el.removeClass('collapsed')
+      collapse: ->
+        el.removeClass('expanded').addClass('collapsed')
 
-    collapse = ->
-      el.addClass('collapsed')
-
-    show = ->
-      el.addClass('visible')
+      hide: ->
+        el.addClass('invisible')

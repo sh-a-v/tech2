@@ -1,30 +1,29 @@
 app.controller 'HeaderControlsCtrl', ($rootScope, $scope, $timeout, appSizeService) ->
-  @visible = false
-  @collapsed = false
+  @visible = true
+  @collapsed = appSizeService.isPhone()
 
   @initialize = ->
     @setEventListeners()
-    @setCollapsed()
-    @activate()
 
   @setEventListeners = ->
-    $rootScope.$on 'app:resized', => @setCollapsed(true)
-
-  @setCollapsed = (resize) ->
-    @collapsed = appSizeService.isPhone()
-    $scope.$apply() if resize
-
-  @activate = ->
-    $timeout (=> @visible = true), 400
-
+    $rootScope.$on 'app:resized', => if appSizeService.isPhone() then @collapse(true) else @expand()
 
   @expand = ->
     return if @isExpanded()
-    @collapsed = false
 
-  @collapse = ->
+    @collapsed = false
+    @view.expand()
+    return
+
+  @collapse = (resize) ->
     return if @isCollapsed()
+
     @collapsed = true
+    @view.collapse()
+
+    try $scope.$apply() if resize
+
+    return
 
   @isVisible = ->
     @visible
@@ -36,12 +35,9 @@ app.controller 'HeaderControlsCtrl', ($rootScope, $scope, $timeout, appSizeServi
     @collapsed
 
   @_broadcastHeaderControlsExpanded = ->
-    $scope.$broadcast 'headerControls:expanded'
+    $rootScope.$broadcast 'headerControls:expanded'
 
   @_broadcastHeaderControlsCollapsed = ->
-    $scope.$broadcast 'headerControls:collapsed'
-
-  @_broadcastHeaderControlsReady = ->
-    $scope.$broadcast 'headerControls:ready'
+    $rootScope.$broadcast 'headerControls:collapsed'
 
   @initialize()

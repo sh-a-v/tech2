@@ -108,44 +108,40 @@
   });
 
   app.controller('HeaderControlsCtrl', function($rootScope, $scope, $timeout, appSizeService) {
-    this.visible = false;
-    this.collapsed = false;
+    this.visible = true;
+    this.collapsed = appSizeService.isPhone();
     this.initialize = function() {
-      this.setEventListeners();
-      this.setCollapsed();
-      return this.activate();
+      return this.setEventListeners();
     };
     this.setEventListeners = function() {
       return $rootScope.$on('app:resized', (function(_this) {
         return function() {
-          return _this.setCollapsed(true);
+          if (appSizeService.isPhone()) {
+            return _this.collapse(true);
+          } else {
+            return _this.expand();
+          }
         };
       })(this));
-    };
-    this.setCollapsed = function(resize) {
-      this.collapsed = appSizeService.isPhone();
-      if (resize) {
-        return $scope.$apply();
-      }
-    };
-    this.activate = function() {
-      return $timeout(((function(_this) {
-        return function() {
-          return _this.visible = true;
-        };
-      })(this)), 400);
     };
     this.expand = function() {
       if (this.isExpanded()) {
         return;
       }
-      return this.collapsed = false;
+      this.collapsed = false;
+      this.view.expand();
     };
-    this.collapse = function() {
+    this.collapse = function(resize) {
       if (this.isCollapsed()) {
         return;
       }
-      return this.collapsed = true;
+      this.collapsed = true;
+      this.view.collapse();
+      try {
+        if (resize) {
+          $scope.$apply();
+        }
+      } catch (_error) {}
     };
     this.isVisible = function() {
       return this.visible;
@@ -157,13 +153,10 @@
       return this.collapsed;
     };
     this._broadcastHeaderControlsExpanded = function() {
-      return $scope.$broadcast('headerControls:expanded');
+      return $rootScope.$broadcast('headerControls:expanded');
     };
     this._broadcastHeaderControlsCollapsed = function() {
-      return $scope.$broadcast('headerControls:collapsed');
-    };
-    this._broadcastHeaderControlsReady = function() {
-      return $scope.$broadcast('headerControls:ready');
+      return $rootScope.$broadcast('headerControls:collapsed');
     };
     return this.initialize();
   });
@@ -173,19 +166,17 @@
       restrict: 'E',
       controller: 'HeaderControlsCtrl',
       controllerAs: 'headerControls',
-      link: function($scope, el, attrs) {
-        var collapse, expand, show;
-        $scope.$on('headerControls:ready', show);
-        $scope.$on('headerControls:expanded', expand);
-        $scope.$on('headerControls:collapsed', collapse);
-        expand = function() {
-          return el.removeClass('collapsed');
-        };
-        collapse = function() {
-          return el.addClass('collapsed');
-        };
-        return show = function() {
-          return el.addClass('visible');
+      link: function($scope, el, attrs, headerControls) {
+        return headerControls.view = {
+          expand: function() {
+            return el.removeClass('collapsed').addClass('expanded');
+          },
+          collapse: function() {
+            return el.removeClass('expanded').addClass('collapsed');
+          },
+          hide: function() {
+            return el.addClass('invisible');
+          }
         };
       }
     };
@@ -195,17 +186,6 @@
     return {
       restrict: 'EA',
       link: function($scope, el, attrs) {}
-    };
-  });
-
-  app.controller('MenuCtrl', function($scope) {});
-
-  app.directive('menu', function() {
-    return {
-      restrict: 'EA',
-      controller: 'MenuCtrl',
-      scope: {},
-      link: function(scope, el, attrs) {}
     };
   });
 
@@ -248,6 +228,111 @@
           return console.log('el', el);
         };
         $scope.$on('popup:activated', show);
+      }
+    };
+  });
+
+  app.controller('MenuCtrl', function($rootScope, $scope, appSizeService) {
+    this.collapsed = !appSizeService.isDesktop();
+    this.initialize = function() {
+      return this.setEventListeners();
+    };
+    this.setEventListeners = function() {
+      return $rootScope.$on('app:resized', (function(_this) {
+        return function() {
+          if (appSizeService.isDesktop()) {
+            return _this.expand();
+          } else {
+            return _this.collapse();
+          }
+        };
+      })(this));
+    };
+    this.toggle = function() {
+      if (appSizeService.isDesktop()) {
+        return;
+      }
+      if (this.isCollapsed()) {
+        return this.expand();
+      } else {
+        return this.collapse();
+      }
+    };
+    this.expand = function() {
+      if (this.isExpanded()) {
+        return;
+      }
+      this.collapsed = false;
+      this.broadcastMenuExpanded();
+      return this.view.show();
+    };
+    this.collapse = function() {
+      if (this.isCollapsed()) {
+        return;
+      }
+      this.collapsed = true;
+      this.broadcastMenuCollapsed();
+      return this.view.hide();
+    };
+    this.isExpanded = function() {
+      return !this.collapsed;
+    };
+    this.isCollapsed = function() {
+      return this.collapsed;
+    };
+    this.broadcastMenuExpanded = function() {
+      return $rootScope.$broadcast('menu:expanded');
+    };
+    this.broadcastMenuCollapsed = function() {
+      return $rootScope.$broadcast('menu:collapsed');
+    };
+    return this.initialize();
+  });
+
+  app.directive('menu', function() {
+    return {
+      restrict: 'EA',
+      controller: 'MenuCtrl',
+      controllerAs: 'menu',
+      link: function($scope, el, attrs, menu) {
+        var menuItemEls;
+        menuItemEls = el.find('li');
+        return menu.view = {
+          show: function() {
+            var index, menuItemEl, meta, style, _i, _len, _results;
+            style = {
+              left: 0
+            };
+            meta = {
+              duration: 150,
+              display: 'block',
+              easing: 'easy-in'
+            };
+            menuItemEls.css('left', '-100%');
+            Velocity(el, style, meta);
+            _results = [];
+            for (index = _i = 0, _len = menuItemEls.length; _i < _len; index = ++_i) {
+              menuItemEl = menuItemEls[index];
+              _results.push(Velocity(menuItemEl, style, {
+                duration: 150 + (80 * index),
+                easing: 'easy-in'
+              }));
+            }
+            return _results;
+          },
+          hide: function() {
+            var meta, style;
+            style = {
+              left: -200 + 'px'
+            };
+            meta = {
+              duration: 300,
+              display: 'none',
+              easing: 'easy-out'
+            };
+            return Velocity(el, style, meta);
+          }
+        };
       }
     };
   });
