@@ -16,6 +16,23 @@
   @media media-phone
     flex 0 0 header-height-phone
 
+.header-menu
+  position absolute
+  top 50%
+  left -10px
+
+  width 18px
+  height 18px
+  margin-top -9px
+
+  transition left 0.2s ease
+  transform translateZ(0)
+
+  &.expanded
+    left -12px
+
+  @media media-desktop
+    display none
 
 /* Logo */
 
@@ -25,10 +42,13 @@
   height 100%
 
 .header-logo-icon
+  position relative
+
   width header-height-desktop - 20
   height header-height-desktop - 20
   margin 0 10px
   box-sizing border-box
+  overflow hidden
 
   border-radius 50%
   background-color white
@@ -36,6 +56,59 @@
   @media media-phone
     width header-height-phone - 10
     height header-height-phone - 10
+
+.header-logo-icon-gearwheel
+  position absolute
+
+  background-size 100% auto
+  background-repeat no-repeat
+  background-position center
+
+  animation spin 1s linear infinite
+  animation-play-state paused
+  animation-direction normal
+
+  &.gearwheel-1
+    top 2px
+    left 10px
+    width 30px
+    height 30px
+
+  &.gearwheel-2
+    top 27px
+    right 5px
+    width 24px
+    height 24px
+
+    animation-direction reverse
+    animation-duration 0.9s
+
+  &.gearwheel-3
+    bottom 5px
+    left 10px
+    width 20px
+    height 20px
+
+    animation-duration 0.7s
+
+  .loading &
+    animation-play-state running
+
+  @media media-phone
+    &.gearwheel-1
+      left 8px
+      width 26px
+      height 26px
+
+    &.gearwheel-2
+      top 22px
+      right 3px
+      width 20px
+      height 20px
+
+    &.gearwheel-3
+      width 16px
+      height 16px
 
 .header-logo-label
   font-size 24px
@@ -46,7 +119,6 @@
 
     &.transparent
       opacity 0.2
-
 
 /* Controls */
 

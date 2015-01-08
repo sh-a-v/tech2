@@ -23,6 +23,7 @@
       requireBase: false
     });
     $resourceProvider.defaults.stripTrailingSlashes = true;
+    $httpProvider.interceptors.push('requestsInterceptor');
   });
 
   app.urls = {
@@ -169,10 +170,14 @@
       link: function($scope, el, attrs, headerControls) {
         return headerControls.view = {
           expand: function() {
-            return el.removeClass('collapsed').addClass('expanded');
+            if (el.hasClass('collapsed')) {
+              return el.removeClass('collapsed').addClass('expanded');
+            }
           },
           collapse: function() {
-            return el.removeClass('expanded').addClass('collapsed');
+            if (el.hasClass('expanded')) {
+              return el.removeClass('expanded').addClass('collapsed');
+            }
           },
           hide: function() {
             return el.addClass('invisible');
@@ -186,49 +191,6 @@
     return {
       restrict: 'EA',
       link: function($scope, el, attrs) {}
-    };
-  });
-
-  app.controller('PopupCtrl', function($rootScope, $scope) {
-    this.active = false;
-    this.activate = function() {
-      this.active = true;
-      return this._broadcastPopupActivated();
-    };
-    this.deactivate = function() {
-      this.active = false;
-      return this._broadcastPopupDeactivated();
-    };
-    this.stopPropagation = function($event) {
-      $event.stopPropagation();
-      return $event.preventDefault();
-    };
-    this.isActive = function() {
-      return this.active;
-    };
-    this._broadcastPopupActivated = function() {
-      return $scope.$broadcast('popup:activated');
-    };
-    this._broadcastPopupDeactivated = function() {
-      return $scope.$broadcast('popup:deactivated');
-    };
-  });
-
-  app.directive('popup', function() {
-    return {
-      restrict: 'EA',
-      controller: 'PopupCtrl',
-      controllerAs: 'popup',
-      scope: {},
-      transclude: true,
-      templateUrl: 'general/popup.html',
-      link: function($scope, el, attrs) {
-        var show;
-        show = function() {
-          return console.log('el', el);
-        };
-        $scope.$on('popup:activated', show);
-      }
     };
   });
 
@@ -337,6 +299,90 @@
     };
   });
 
+  app.controller('LoadingCtrl', function($rootScope, $scope) {
+    this.requestsCount = 0;
+    this.initialize = function() {
+      return this.setEventListeners();
+    };
+    this.setEventListeners = function() {
+      $rootScope.$on('server:request', (function(_this) {
+        return function() {
+          return _this.addRequest();
+        };
+      })(this));
+      return $rootScope.$on('server:response', (function(_this) {
+        return function() {
+          return _this.removeRequest();
+        };
+      })(this));
+    };
+    this.addRequest = function() {
+      return this.requestsCount += 1;
+    };
+    this.removeRequest = function() {
+      return this.requestsCount -= 1;
+    };
+    this.isOneRequest = function() {
+      return this.requestsCount === 1;
+    };
+    this.isThereRequests = function() {
+      return this.requestsCount;
+    };
+    return this.initialize();
+  });
+
+  app.directive('loading', function() {
+    return {
+      restrict: 'A',
+      controller: 'LoadingCtrl',
+      controllerAs: 'loading',
+      link: function($scope, el, attrs, loading) {}
+    };
+  });
+
+  app.controller('PopupCtrl', function($rootScope, $scope) {
+    this.active = false;
+    this.activate = function() {
+      this.active = true;
+      return this._broadcastPopupActivated();
+    };
+    this.deactivate = function() {
+      this.active = false;
+      return this._broadcastPopupDeactivated();
+    };
+    this.stopPropagation = function($event) {
+      $event.stopPropagation();
+      return $event.preventDefault();
+    };
+    this.isActive = function() {
+      return this.active;
+    };
+    this._broadcastPopupActivated = function() {
+      return $scope.$broadcast('popup:activated');
+    };
+    this._broadcastPopupDeactivated = function() {
+      return $scope.$broadcast('popup:deactivated');
+    };
+  });
+
+  app.directive('popup', function() {
+    return {
+      restrict: 'EA',
+      controller: 'PopupCtrl',
+      controllerAs: 'popup',
+      scope: {},
+      transclude: true,
+      templateUrl: 'general/popup.html',
+      link: function($scope, el, attrs) {
+        var show;
+        show = function() {
+          return console.log('el', el);
+        };
+        $scope.$on('popup:activated', show);
+      }
+    };
+  });
+
   app.filter = angular.module('filter', []);
 
   app.user = angular.module('user', []);
@@ -365,6 +411,37 @@
     this.setEventListeners = function() {};
     this.activate = function() {};
     return this.initialize();
+  });
+
+  app.factory('requestsInterceptor', function($rootScope, $q) {
+    var interceptor, serverBroadcast;
+    serverBroadcast = {
+      broadcastServerRequest: function() {
+        return $rootScope.$emit('server:request');
+      },
+      broadcastServerResponse: function() {
+        return $rootScope.$emit('server:response');
+      },
+      broadcastServerError: function() {
+        return $rootScope.$emit('server:error');
+      }
+    };
+    interceptor = {
+      request: function(config) {
+        serverBroadcast.broadcastServerRequest();
+        return config;
+      },
+      response: function(response) {
+        serverBroadcast.broadcastServerResponse();
+        return response;
+      },
+      responseError: function(response) {
+        serverBroadcast.broadcastServerResponse();
+        serverBroadcast.broadcastServerError();
+        return $q.reject(response);
+      }
+    };
+    return interceptor;
   });
 
   app.user.directive('userAuth', function() {

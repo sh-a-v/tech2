@@ -115,7 +115,7 @@ gulp
       .pipe(concat('app.build.coffee'))
       .pipe(coffee())
       .pipe(gulp.dest(paths.scriptsAppBuildFolder))
-      .pipe(uglify({mangle: false}))
+      .pipe(uglify({mangle: true}))
       .pipe(rename({suffix: '.min'}))
       .pipe(gulp.dest(paths.scriptsAppBuildFolder));
   })

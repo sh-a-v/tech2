@@ -28,6 +28,9 @@ app.config ($stateProvider, $locationProvider, $resourceProvider, $httpProvider)
   $resourceProvider
     .defaults.stripTrailingSlashes = true
 
+  $httpProvider
+    .interceptors.push 'requestsInterceptor'
+
   return
 
 app.urls =
