@@ -1,10 +1,17 @@
-.popup
+.popup-wrapper
   position fixed
   top 0
   left 0
   z-index 10
 
   display none
+  width 100%
+  height 100%
+
+  opacity 0
+
+.popup
+  flex-display flex
   flex-justify-content center
   flex-align-items center
   width 100%
@@ -12,9 +19,6 @@
   overflow auto
 
   background-color black-05
-
-  &.active
-    flex-display flex
 
 .popup-close
   position fixed
@@ -24,6 +28,13 @@
   display block
   width 50px
   height 50px
+
+  @media media-phone
+    top 10px
+    right 10px
+
+    width 40px
+    height 40px
 
 .popup-content
   flex-display flex

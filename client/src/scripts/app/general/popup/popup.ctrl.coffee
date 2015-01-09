@@ -3,11 +3,13 @@ app.controller 'PopupCtrl', ($rootScope, $scope) ->
 
   @activate = ->
     @active = true
-    @_broadcastPopupActivated()
+    @view.show()
+    @broadcastPopupActivated()
 
   @deactivate = ->
     @active = false
-    @_broadcastPopupDeactivated()
+    @view.hide()
+    @broadcastPopupDeactivated()
 
   @stopPropagation = ($event) ->
     $event.stopPropagation()
@@ -16,10 +18,10 @@ app.controller 'PopupCtrl', ($rootScope, $scope) ->
   @isActive = ->
     @active
 
-  @_broadcastPopupActivated = ->
-    $scope.$broadcast 'popup:activated'
+  @broadcastPopupActivated = ->
+    $rootScope.$broadcast 'popup:activated'
 
-  @_broadcastPopupDeactivated = ->
-    $scope.$broadcast 'popup:deactivated'
+  @broadcastPopupDeactivated = ->
+    $rootScope.$broadcast 'popup:deactivated'
 
   return
