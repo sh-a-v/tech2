@@ -45,9 +45,11 @@ app.use flash()
 app.use '/static/client', express.static(path.join __dirname, '..', CONFIG.CLIENT.STATIC_FILES_PATH)
 app.use '/static/manager', express.static(path.join __dirname, '..', CONFIG.MANAGER.STATIC_FILES_PATH)
 
-app.use subdomain('api', apiRouter)
-app.use subdomain('manager', managerRouter)
+#app.use subdomain('api', apiRouter)
+#app.use subdomain('manager', managerRouter)
+app.use '/api', apiRouter
+app.use '/manager', managerRouter
 app.use '*', clientRouter
 
 app.listen CONFIG.PORT, () ->
-    console.log "Express server listening on port #{CONFIG.PORT}"
+  console.log "Express server listening on port #{CONFIG.PORT}"

@@ -34,4 +34,5 @@ app.config ($stateProvider, $locationProvider, $resourceProvider, $httpProvider)
   return
 
 app.urls =
-  api: 'http://api.engineerium.io:1337'
+  api: '/api'
+  #api: 'http://api.engineerium.io:1337'

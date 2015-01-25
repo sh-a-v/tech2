@@ -27,7 +27,7 @@
   });
 
   app.urls = {
-    api: 'http://api.engineerium.io:1337'
+    api: '/api'
   };
 
   app.controller('AppContainerCtrl', function($rootScope, $scope, $window) {
@@ -194,47 +194,6 @@
     };
   });
 
-  app.controller('LoadingCtrl', function($rootScope, $scope) {
-    this.requestsCount = 0;
-    this.initialize = function() {
-      return this.setEventListeners();
-    };
-    this.setEventListeners = function() {
-      $rootScope.$on('server:request', (function(_this) {
-        return function() {
-          return _this.addRequest();
-        };
-      })(this));
-      return $rootScope.$on('server:response', (function(_this) {
-        return function() {
-          return _this.removeRequest();
-        };
-      })(this));
-    };
-    this.addRequest = function() {
-      return this.requestsCount += 1;
-    };
-    this.removeRequest = function() {
-      return this.requestsCount -= 1;
-    };
-    this.isOneRequest = function() {
-      return this.requestsCount === 1;
-    };
-    this.isThereRequests = function() {
-      return this.requestsCount;
-    };
-    return this.initialize();
-  });
-
-  app.directive('loading', function() {
-    return {
-      restrict: 'A',
-      controller: 'LoadingCtrl',
-      controllerAs: 'loading',
-      link: function($scope, el, attrs, loading) {}
-    };
-  });
-
   app.controller('MenuCtrl', function($rootScope, $scope, appSizeService) {
     this.collapsed = !appSizeService.isDesktop();
     this.initialize = function() {
@@ -340,6 +299,47 @@
     };
   });
 
+  app.controller('LoadingCtrl', function($rootScope, $scope) {
+    this.requestsCount = 0;
+    this.initialize = function() {
+      return this.setEventListeners();
+    };
+    this.setEventListeners = function() {
+      $rootScope.$on('server:request', (function(_this) {
+        return function() {
+          return _this.addRequest();
+        };
+      })(this));
+      return $rootScope.$on('server:response', (function(_this) {
+        return function() {
+          return _this.removeRequest();
+        };
+      })(this));
+    };
+    this.addRequest = function() {
+      return this.requestsCount += 1;
+    };
+    this.removeRequest = function() {
+      return this.requestsCount -= 1;
+    };
+    this.isOneRequest = function() {
+      return this.requestsCount === 1;
+    };
+    this.isThereRequests = function() {
+      return this.requestsCount;
+    };
+    return this.initialize();
+  });
+
+  app.directive('loading', function() {
+    return {
+      restrict: 'A',
+      controller: 'LoadingCtrl',
+      controllerAs: 'loading',
+      link: function($scope, el, attrs, loading) {}
+    };
+  });
+
   app.controller('PopupCtrl', function($rootScope, $scope) {
     this.active = false;
     this.activate = function() {
@@ -394,7 +394,7 @@
                 return Velocity(el, {
                   opacity: 1
                 }, {
-                  duration: 400,
+                  duration: 80,
                   display: 'block'
                 });
               }

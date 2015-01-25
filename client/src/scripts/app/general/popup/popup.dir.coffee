@@ -18,7 +18,7 @@ app.directive 'popup', ->
           }, {
             duration: 250,
             begin: ->
-              Velocity el, {opacity: 1}, {duration: 400, display: 'block'}
+              Velocity el, {opacity: 1}, {duration: 80, display: 'block'}
           }
 
       hide: ->
