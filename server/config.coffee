@@ -1,5 +1,7 @@
 'use strict'
 
+# create and use config-local for dev
+
 try
   CONFIG = require('./config-local')
 catch err
@@ -14,8 +16,8 @@ catch err
     MAIL_PASSWORD: ''  # 'iuerw45fheir'
 
     CLIENT:
-      STATIC_FILES_PATH: ''  # path.join(__dirname, '..', 'client/build')
-      BASE_TEMPLATE_PATH: ''  # path.join(__dirname, '../..', 'client/build/templates/server-side.base.html')
+      STATIC_FILES_PATH: ''  # 'client/build'
+      BASE_TEMPLATE_PATH: ''  # 'client/build/templates/index.html'
 
     MANAGER:
       STATIC_FILES_PATH: ''
