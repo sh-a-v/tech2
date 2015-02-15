@@ -18,6 +18,8 @@
   flex-align-items center
   width 100%
   height 100%
+  overflow-y auto
+  overflow-x hidden
 
 .popup-close
   position fixed
@@ -35,10 +37,15 @@
     width 40px
     height 40px
 
-.popup-content
+.popup-content-wrapper
   flex-display flex
-  width 500px
-  height 250px
 
+.popup-content
+  width popup-width
+  min-height 300px
+
+  border-radius 1px
   background-color grey-2
 
+  @media media-phone
+    width 100%

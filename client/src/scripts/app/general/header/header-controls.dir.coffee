@@ -3,7 +3,7 @@ app.directive 'headerControls', ->
   controller: 'HeaderControlsCtrl'
   controllerAs: 'headerControls'
   link: ($scope, el, attrs, headerControls) ->
-    view =
+    headerControls.view =
       initialize: ->
         @setEventListeners()
 
@@ -20,4 +20,4 @@ app.directive 'headerControls', ->
       hide: ->
         el.addClass('invisible')
 
-    view.initialize()
+    headerControls.view.initialize()

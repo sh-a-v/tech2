@@ -1,28 +1,23 @@
 app.controller 'PopupCtrl', ($rootScope, $scope) ->
-  popup =
-    active: false
+  @active = false
 
-    activate: ->
-      @active = true
-      @broadcastPopupActivated()
+  @activate = ->
+    @active = true
+    @broadcastPopupActivated()
 
-    deactivate: ->
-      @active = false
-      @broadcastPopupDeactivated()
+  @deactivate = ->
+    @active = false
+    @broadcastPopupDeactivated()
 
-    stopPropagation: ($event) ->
-      $event.stopPropagation()
-      $event.preventDefault()
+  @stopPropagation = ($event) ->
+    $event.stopPropagation()
+    $event.preventDefault()
 
-    isActive: ->
-      @active
+  @isActive = ->
+    @active
 
-    broadcastPopupActivated: ->
-      $scope.$broadcast 'popup:activated'
-      $rootScope.$broadcast 'popup:activated'
+  @broadcastPopupActivated = ->
+    $scope.$emit 'popup:activated'
 
-    broadcastPopupDeactivated: ->
-      $scope.$broadcast 'popup:deactivated'
-      $rootScope.$broadcast 'popup:deactivated'
-
-  angular.extend @, popup
+  @broadcastPopupDeactivated = ->
+    $scope.$emit 'popup:deactivated'

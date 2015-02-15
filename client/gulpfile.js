@@ -12,7 +12,8 @@ var
   cssBase64 = require('gulp-css-base64'),
   rename = require('gulp-rename'),
   browserSync = require('browser-sync'),
-  plumber = require('gulp-plumber');
+  plumber = require('gulp-plumber'),
+  maps = require('gulp-sourcemaps');
 
 var
   reload = browserSync.reload;
@@ -112,6 +113,7 @@ gulp
   .task('scripts-app', function () {  /* Scripts app */
     return gulp.src(paths.scriptsAppFiles)
       .pipe(plumber())
+      .pipe(maps.init())
       .pipe(concat('app.build.coffee'))
       .pipe(coffee())
       .pipe(gulp.dest(paths.scriptsAppBuildFolder))

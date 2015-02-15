@@ -7,9 +7,9 @@ app.directive 'popup', ->
   templateUrl: 'general/popup.html'
   link: ($scope, el, attrs, popup) ->
     popupEl = el.children()
-    contentEl = angular.element(popupEl[0].getElementsByClassName('popup-content')[0])
+    contentEl = angular.element(popupEl[0].getElementsByClassName('popup-content-wrapper')[0])
 
-    view =
+    popup.view =
       initialize: ->
         @setEventListeners()
 
@@ -37,4 +37,4 @@ app.directive 'popup', ->
               Velocity el, {opacity: 0}, {duration: 50, display: 'none'}
           }
 
-    view.initialize()
+    popup.view.initialize()

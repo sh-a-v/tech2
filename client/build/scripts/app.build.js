@@ -109,73 +109,67 @@
   });
 
   app.controller('HeaderControlsCtrl', function($rootScope, $scope, $timeout, appSizeService) {
-    var headerControls;
-    headerControls = {
-      visible: true,
-      collapsed: appSizeService.isPhone(),
-      initialize: function() {
-        return this.setEventListeners();
-      },
-      setEventListeners: function() {
-        $rootScope.$on('app:resized', (function(_this) {
-          return function() {
-            if (appSizeService.isPhone()) {
-              return _this.collapse();
-            } else {
-              return _this.expand();
-            }
-          };
-        })(this));
-        $rootScope.$on('popup:activated', (function(_this) {
-          return function() {
-            return _this.hide();
-          };
-        })(this));
-        return $rootScope.$on('popup:deactivated', (function(_this) {
-          return function() {
-            return _this.show();
-          };
-        })(this));
-      },
-      expand: function() {
-        if (this.isExpanded()) {
-          return;
-        }
-        this.collapsed = false;
-        this.broadcastHeaderControlsExpanded();
-      },
-      collapse: function() {
-        if (this.isCollapsed()) {
-          return;
-        }
-        this.collapsed = true;
-        this.broadcastHeaderControlsCollapsed();
-      },
-      show: function() {
-        return this.visible = true;
-      },
-      hide: function() {
-        return this.visible = false;
-      },
-      isVisible: function() {
-        return this.visible;
-      },
-      isExpanded: function() {
-        return !this.collapsed;
-      },
-      isCollapsed: function() {
-        return this.collapsed;
-      },
-      broadcastHeaderControlsExpanded: function() {
-        $scope.$broadcast('headerControls:expanded');
-        return $rootScope.$broadcast('headerControls:expanded');
-      },
-      broadcastHeaderControlsCollapsed: function() {
-        $scope.$broadcast('headerControls:collapsed');
-        return $rootScope.$broadcast('headerControls:collapsed');
-      }
+    this.visible = true;
+    this.collapsed = appSizeService.isPhone();
+    this.initialize = function() {
+      return this.setEventListeners();
     };
-    angular.extend(this, headerControls);
+    this.setEventListeners = function() {
+      $rootScope.$on('app:resized', (function(_this) {
+        return function() {
+          if (appSizeService.isPhone()) {
+            return _this.collapse();
+          } else {
+            return _this.expand();
+          }
+        };
+      })(this));
+      $rootScope.$on('popup:activated', (function(_this) {
+        return function() {
+          return _this.hide();
+        };
+      })(this));
+      return $rootScope.$on('popup:deactivated', (function(_this) {
+        return function() {
+          return _this.show();
+        };
+      })(this));
+    };
+    this.expand = function() {
+      if (this.isExpanded()) {
+        return;
+      }
+      this.collapsed = false;
+      this.broadcastHeaderControlsExpanded();
+    };
+    this.collapse = function() {
+      if (this.isCollapsed()) {
+        return;
+      }
+      this.collapsed = true;
+      this.broadcastHeaderControlsCollapsed();
+    };
+    this.show = function() {
+      return this.visible = true;
+    };
+    this.hide = function() {
+      return this.visible = false;
+    };
+    this.isVisible = function() {
+      return this.visible;
+    };
+    this.isExpanded = function() {
+      return !this.collapsed;
+    };
+    this.isCollapsed = function() {
+      return this.collapsed;
+    };
+    this.broadcastHeaderControlsExpanded = function() {
+      return $scope.$emit('headerControls:expanded');
+    };
+    this.broadcastHeaderControlsCollapsed = function() {
+      return $scope.$emit('headerControls:collapsed');
+    };
     return this.initialize();
   });
 
@@ -185,8 +179,7 @@
       controller: 'HeaderControlsCtrl',
       controllerAs: 'headerControls',
       link: function($scope, el, attrs, headerControls) {
-        var view;
-        view = {
+        headerControls.view = {
           initialize: function() {
             return this.setEventListeners();
           },
@@ -216,7 +209,7 @@
             return el.addClass('invisible');
           }
         };
-        return view.initialize();
+        return headerControls.view.initialize();
       }
     };
   });
@@ -375,34 +368,28 @@
   });
 
   app.controller('PopupCtrl', function($rootScope, $scope) {
-    var popup;
-    popup = {
-      active: false,
-      activate: function() {
-        this.active = true;
-        return this.broadcastPopupActivated();
-      },
-      deactivate: function() {
-        this.active = false;
-        return this.broadcastPopupDeactivated();
-      },
-      stopPropagation: function($event) {
-        $event.stopPropagation();
-        return $event.preventDefault();
-      },
-      isActive: function() {
-        return this.active;
-      },
-      broadcastPopupActivated: function() {
-        $scope.$broadcast('popup:activated');
-        return $rootScope.$broadcast('popup:activated');
-      },
-      broadcastPopupDeactivated: function() {
-        $scope.$broadcast('popup:deactivated');
-        return $rootScope.$broadcast('popup:deactivated');
-      }
+    this.active = false;
+    this.activate = function() {
+      this.active = true;
+      return this.broadcastPopupActivated();
     };
-    return angular.extend(this, popup);
+    this.deactivate = function() {
+      this.active = false;
+      return this.broadcastPopupDeactivated();
+    };
+    this.stopPropagation = function($event) {
+      $event.stopPropagation();
+      return $event.preventDefault();
+    };
+    this.isActive = function() {
+      return this.active;
+    };
+    this.broadcastPopupActivated = function() {
+      return $scope.$emit('popup:activated');
+    };
+    return this.broadcastPopupDeactivated = function() {
+      return $scope.$emit('popup:deactivated');
+    };
   });
 
   app.directive('popup', function() {
@@ -414,10 +401,10 @@
       transclude: true,
       templateUrl: 'general/popup.html',
       link: function($scope, el, attrs, popup) {
-        var contentEl, popupEl, view;
+        var contentEl, popupEl;
         popupEl = el.children();
-        contentEl = angular.element(popupEl[0].getElementsByClassName('popup-content')[0]);
-        view = {
+        contentEl = angular.element(popupEl[0].getElementsByClassName('popup-content-wrapper')[0]);
+        popup.view = {
           initialize: function() {
             return this.setEventListeners();
           },
@@ -469,7 +456,7 @@
             });
           }
         };
-        return view.initialize();
+        return popup.view.initialize();
       }
     };
   });
@@ -540,7 +527,6 @@
       restrict: 'EA',
       require: '^popup',
       link: function($scope, el, attrs, popupCtrl) {
-        console.log(popupCtrl);
         $scope.$on('user:authActivate', (function(_this) {
           return function() {
             return popupCtrl.activate();

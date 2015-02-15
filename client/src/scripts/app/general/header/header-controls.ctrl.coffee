@@ -1,55 +1,48 @@
 app.controller 'HeaderControlsCtrl', ($rootScope, $scope, $timeout, appSizeService) ->
-  headerControls =
-    visible: true
-    collapsed: appSizeService.isPhone()
-  
-    initialize: ->
-      @setEventListeners()
-  
-    setEventListeners: ->
-      $rootScope.$on 'app:resized', => if appSizeService.isPhone() then @collapse() else @expand()
-      $rootScope.$on 'popup:activated', => @hide()
-      $rootScope.$on 'popup:deactivated', => @show()
+  @visible = true
+  @collapsed = appSizeService.isPhone()
 
-    expand: ->
-      return if @isExpanded()
-  
-      @collapsed = false
-      @broadcastHeaderControlsExpanded()
-      return
-  
-    collapse: ->
-      return if @isCollapsed()
-  
-      @collapsed = true
-      @broadcastHeaderControlsCollapsed()
-      return
+  @initialize = ->
+    @setEventListeners()
 
-    show: ->
-      @visible = true
-      #try $scope.$apply()
+  @setEventListeners = ->
+    $rootScope.$on 'app:resized', => if appSizeService.isPhone() then @collapse() else @expand()
+    $rootScope.$on 'popup:activated', => @hide()
+    $rootScope.$on 'popup:deactivated', => @show()
 
-    hide: ->
-      @visible = false
-      #try $scope.$apply()
+  @expand = ->
+    return if @isExpanded()
 
-    isVisible: ->
-      @visible
-  
-    isExpanded: ->
-      !@collapsed
-  
-    isCollapsed: ->
-      @collapsed
-  
-    broadcastHeaderControlsExpanded: ->
-      $scope.$broadcast 'headerControls:expanded'
-      $rootScope.$broadcast 'headerControls:expanded'
-  
-    broadcastHeaderControlsCollapsed: ->
-      $scope.$broadcast 'headerControls:collapsed'
-      $rootScope.$broadcast 'headerControls:collapsed'
+    @collapsed = false
+    @broadcastHeaderControlsExpanded()
+    return
 
-  angular.extend @, headerControls
+  @collapse = ->
+    return if @isCollapsed()
+
+    @collapsed = true
+    @broadcastHeaderControlsCollapsed()
+    return
+
+  @show = ->
+    @visible = true
+
+  @hide = ->
+    @visible = false
+
+  @isVisible = ->
+    @visible
+
+  @isExpanded = ->
+    !@collapsed
+
+  @isCollapsed = ->
+    @collapsed
+
+  @broadcastHeaderControlsExpanded = ->
+    $scope.$emit 'headerControls:expanded'
+
+  @broadcastHeaderControlsCollapsed = ->
+    $scope.$emit 'headerControls:collapsed'
 
   @initialize()

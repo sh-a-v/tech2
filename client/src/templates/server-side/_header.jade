@@ -7,7 +7,7 @@ header.header
       .header-logo-icon-gearwheel.icon-gearwheel.gearwheel-3
     .header-logo-label(ng-class='{transparent:headerControls.isExpanded()}') Engineerium
 
-  header-controls.header-controls(ng-class='{invisible:!headerControls.isVisible(), collapsed:headerControls.isCollapsed()}')
+  header-controls.header-controls(ng-class='{transparent:!headerControls.isVisible(), collapsed:headerControls.isCollapsed()}')
     user-control.header-control.button.button-round.icon.icon-user(ng-click='user.activate()')
     filter-control.header-control.button.button-round.icon.icon-filter(ng-click='filter.activate()')
 

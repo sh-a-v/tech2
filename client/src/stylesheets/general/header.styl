@@ -135,8 +135,9 @@
   transition all 0.4s ease-in
   transform translateZ(0)
 
-  &.invisible
-    //opacity 0.2
+  &.transparent
+    opacity 0.1
+    transition opacity 0.2s
 
   &.expanded
     max-width 100%
@@ -149,6 +150,9 @@
     top 10px
     max-width header-control-width-phone + 10
     height header-control-width-phone
+
+    &.transparent
+      opacity 0
 
     &.collapsed
       max-width header-control-width-phone + 10
