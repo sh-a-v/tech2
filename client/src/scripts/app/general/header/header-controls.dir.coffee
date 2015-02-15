@@ -3,7 +3,14 @@ app.directive 'headerControls', ->
   controller: 'HeaderControlsCtrl'
   controllerAs: 'headerControls'
   link: ($scope, el, attrs, headerControls) ->
-    headerControls.view =
+    view =
+      initialize: ->
+        @setEventListeners()
+
+      setEventListeners: ->
+        $scope.$on 'headerControls:expanded', => @expand()
+        $scope.$on 'headerControls:collapsed', => @collapse()
+
       expand: ->
         el.removeClass('collapsed').addClass('expanded') if el.hasClass('collapsed')
 
@@ -12,3 +19,5 @@ app.directive 'headerControls', ->
 
       hide: ->
         el.addClass('invisible')
+
+    view.initialize()

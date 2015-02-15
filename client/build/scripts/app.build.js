@@ -109,56 +109,73 @@
   });
 
   app.controller('HeaderControlsCtrl', function($rootScope, $scope, $timeout, appSizeService) {
-    this.visible = true;
-    this.collapsed = appSizeService.isPhone();
-    this.initialize = function() {
-      return this.setEventListeners();
-    };
-    this.setEventListeners = function() {
-      return $rootScope.$on('app:resized', (function(_this) {
-        return function() {
-          if (appSizeService.isPhone()) {
-            return _this.collapse(true);
-          } else {
-            return _this.expand();
-          }
-        };
-      })(this));
-    };
-    this.expand = function() {
-      if (this.isExpanded()) {
-        return;
-      }
-      this.collapsed = false;
-      this.view.expand();
-    };
-    this.collapse = function(resize) {
-      if (this.isCollapsed()) {
-        return;
-      }
-      this.collapsed = true;
-      this.view.collapse();
-      try {
-        if (resize) {
-          $scope.$apply();
+    var headerControls;
+    headerControls = {
+      visible: true,
+      collapsed: appSizeService.isPhone(),
+      initialize: function() {
+        return this.setEventListeners();
+      },
+      setEventListeners: function() {
+        $rootScope.$on('app:resized', (function(_this) {
+          return function() {
+            if (appSizeService.isPhone()) {
+              return _this.collapse();
+            } else {
+              return _this.expand();
+            }
+          };
+        })(this));
+        $rootScope.$on('popup:activated', (function(_this) {
+          return function() {
+            return _this.hide();
+          };
+        })(this));
+        return $rootScope.$on('popup:deactivated', (function(_this) {
+          return function() {
+            return _this.show();
+          };
+        })(this));
+      },
+      expand: function() {
+        if (this.isExpanded()) {
+          return;
         }
-      } catch (_error) {}
+        this.collapsed = false;
+        this.broadcastHeaderControlsExpanded();
+      },
+      collapse: function() {
+        if (this.isCollapsed()) {
+          return;
+        }
+        this.collapsed = true;
+        this.broadcastHeaderControlsCollapsed();
+      },
+      show: function() {
+        return this.visible = true;
+      },
+      hide: function() {
+        return this.visible = false;
+      },
+      isVisible: function() {
+        return this.visible;
+      },
+      isExpanded: function() {
+        return !this.collapsed;
+      },
+      isCollapsed: function() {
+        return this.collapsed;
+      },
+      broadcastHeaderControlsExpanded: function() {
+        $scope.$broadcast('headerControls:expanded');
+        return $rootScope.$broadcast('headerControls:expanded');
+      },
+      broadcastHeaderControlsCollapsed: function() {
+        $scope.$broadcast('headerControls:collapsed');
+        return $rootScope.$broadcast('headerControls:collapsed');
+      }
     };
-    this.isVisible = function() {
-      return this.visible;
-    };
-    this.isExpanded = function() {
-      return !this.collapsed;
-    };
-    this.isCollapsed = function() {
-      return this.collapsed;
-    };
-    this._broadcastHeaderControlsExpanded = function() {
-      return $rootScope.$broadcast('headerControls:expanded');
-    };
-    this._broadcastHeaderControlsCollapsed = function() {
-      return $rootScope.$broadcast('headerControls:collapsed');
-    };
+    angular.extend(this, headerControls);
     return this.initialize();
   });
 
@@ -168,7 +185,23 @@
       controller: 'HeaderControlsCtrl',
       controllerAs: 'headerControls',
       link: function($scope, el, attrs, headerControls) {
-        return headerControls.view = {
+        var view;
+        view = {
+          initialize: function() {
+            return this.setEventListeners();
+          },
+          setEventListeners: function() {
+            $scope.$on('headerControls:expanded', (function(_this) {
+              return function() {
+                return _this.expand();
+              };
+            })(this));
+            return $scope.$on('headerControls:collapsed', (function(_this) {
+              return function() {
+                return _this.collapse();
+              };
+            })(this));
+          },
           expand: function() {
             if (el.hasClass('collapsed')) {
               return el.removeClass('collapsed').addClass('expanded');
@@ -183,6 +216,7 @@
             return el.addClass('invisible');
           }
         };
+        return view.initialize();
       }
     };
   });
@@ -341,30 +375,34 @@
   });
 
   app.controller('PopupCtrl', function($rootScope, $scope) {
-    this.active = false;
-    this.activate = function() {
-      this.active = true;
-      this.view.show();
-      return this.broadcastPopupActivated();
+    var popup;
+    popup = {
+      active: false,
+      activate: function() {
+        this.active = true;
+        return this.broadcastPopupActivated();
+      },
+      deactivate: function() {
+        this.active = false;
+        return this.broadcastPopupDeactivated();
+      },
+      stopPropagation: function($event) {
+        $event.stopPropagation();
+        return $event.preventDefault();
+      },
+      isActive: function() {
+        return this.active;
+      },
+      broadcastPopupActivated: function() {
+        $scope.$broadcast('popup:activated');
+        return $rootScope.$broadcast('popup:activated');
+      },
+      broadcastPopupDeactivated: function() {
+        $scope.$broadcast('popup:deactivated');
+        return $rootScope.$broadcast('popup:deactivated');
+      }
     };
-    this.deactivate = function() {
-      this.active = false;
-      this.view.hide();
-      return this.broadcastPopupDeactivated();
-    };
-    this.stopPropagation = function($event) {
-      $event.stopPropagation();
-      return $event.preventDefault();
-    };
-    this.isActive = function() {
-      return this.active;
-    };
-    this.broadcastPopupActivated = function() {
-      return $rootScope.$broadcast('popup:activated');
-    };
-    this.broadcastPopupDeactivated = function() {
-      return $rootScope.$broadcast('popup:deactivated');
-    };
+    return angular.extend(this, popup);
   });
 
   app.directive('popup', function() {
@@ -376,10 +414,25 @@
       transclude: true,
       templateUrl: 'general/popup.html',
       link: function($scope, el, attrs, popup) {
-        var contentEl, popupEl;
+        var contentEl, popupEl, view;
         popupEl = el.children();
         contentEl = angular.element(popupEl[0].getElementsByClassName('popup-content')[0]);
-        return popup.view = {
+        view = {
+          initialize: function() {
+            return this.setEventListeners();
+          },
+          setEventListeners: function() {
+            $scope.$on('popup:activated', (function(_this) {
+              return function() {
+                return _this.show();
+              };
+            })(this));
+            return $scope.$on('popup:deactivated', (function(_this) {
+              return function() {
+                return _this.hide();
+              };
+            })(this));
+          },
           show: function() {
             Velocity(contentEl, {
               scaleY: 0.1
@@ -416,6 +469,7 @@
             });
           }
         };
+        return view.initialize();
       }
     };
   });
@@ -486,6 +540,7 @@
       restrict: 'EA',
       require: '^popup',
       link: function($scope, el, attrs, popupCtrl) {
+        console.log(popupCtrl);
         $scope.$on('user:authActivate', (function(_this) {
           return function() {
             return popupCtrl.activate();

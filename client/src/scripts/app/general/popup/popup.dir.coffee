@@ -9,7 +9,14 @@ app.directive 'popup', ->
     popupEl = el.children()
     contentEl = angular.element(popupEl[0].getElementsByClassName('popup-content')[0])
 
-    popup.view =
+    view =
+      initialize: ->
+        @setEventListeners()
+
+      setEventListeners: ->
+        $scope.$on 'popup:activated', => @show()
+        $scope.$on 'popup:deactivated', => @hide()
+
       show: ->
         Velocity contentEl, {scaleY: 0.1}, {duration: 1}
 
@@ -29,3 +36,5 @@ app.directive 'popup', ->
             complete: ->
               Velocity el, {opacity: 0}, {duration: 50, display: 'none'}
           }
+
+    view.initialize()
