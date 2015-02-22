@@ -12,6 +12,8 @@
   opacity 0
   background-color black-05
 
+  will-change opacity
+
 .popup
   flex-display flex
   flex-justify-content center
@@ -39,13 +41,18 @@
 
 .popup-content-wrapper
   flex-display flex
+  flex-direction column
+  flex-align-items center
 
-.popup-content
-  width popup-width
-  min-height 300px
-
-  border-radius 1px
-  background-color grey-2
+  //will-change transform
 
   @media media-phone
     width 100%
+
+.popup-content
+  width popup-width
+  min-height 50px
+  margin 10px 0
+
+  @media media-phone
+    width 94%

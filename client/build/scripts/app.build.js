@@ -108,6 +108,47 @@
     };
   });
 
+  app.controller('LoadingCtrl', function($rootScope, $scope) {
+    this.requestsCount = 0;
+    this.initialize = function() {
+      return this.setEventListeners();
+    };
+    this.setEventListeners = function() {
+      $rootScope.$on('server:request', (function(_this) {
+        return function() {
+          return _this.addRequest();
+        };
+      })(this));
+      return $rootScope.$on('server:response', (function(_this) {
+        return function() {
+          return _this.removeRequest();
+        };
+      })(this));
+    };
+    this.addRequest = function() {
+      return this.requestsCount += 1;
+    };
+    this.removeRequest = function() {
+      return this.requestsCount -= 1;
+    };
+    this.isOneRequest = function() {
+      return this.requestsCount === 1;
+    };
+    this.isThereRequests = function() {
+      return this.requestsCount;
+    };
+    return this.initialize();
+  });
+
+  app.directive('loading', function() {
+    return {
+      restrict: 'A',
+      controller: 'LoadingCtrl',
+      controllerAs: 'loading',
+      link: function($scope, el, attrs, loading) {}
+    };
+  });
+
   app.controller('HeaderControlsCtrl', function($rootScope, $scope, $timeout, appSizeService) {
     this.visible = true;
     this.collapsed = appSizeService.isPhone();
@@ -218,47 +259,6 @@
     return {
       restrict: 'EA',
       link: function($scope, el, attrs) {}
-    };
-  });
-
-  app.controller('LoadingCtrl', function($rootScope, $scope) {
-    this.requestsCount = 0;
-    this.initialize = function() {
-      return this.setEventListeners();
-    };
-    this.setEventListeners = function() {
-      $rootScope.$on('server:request', (function(_this) {
-        return function() {
-          return _this.addRequest();
-        };
-      })(this));
-      return $rootScope.$on('server:response', (function(_this) {
-        return function() {
-          return _this.removeRequest();
-        };
-      })(this));
-    };
-    this.addRequest = function() {
-      return this.requestsCount += 1;
-    };
-    this.removeRequest = function() {
-      return this.requestsCount -= 1;
-    };
-    this.isOneRequest = function() {
-      return this.requestsCount === 1;
-    };
-    this.isThereRequests = function() {
-      return this.requestsCount;
-    };
-    return this.initialize();
-  });
-
-  app.directive('loading', function() {
-    return {
-      restrict: 'A',
-      controller: 'LoadingCtrl',
-      controllerAs: 'loading',
-      link: function($scope, el, attrs, loading) {}
     };
   });
 

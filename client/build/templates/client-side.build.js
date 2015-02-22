@@ -1,3 +1,3 @@
 angular.module("engineerium").run(["$templateCache", function($templateCache) {$templateCache.put("filter/filter-control.html","<div ng-click=\"filter.activate()\" class=\"header-control button button-round icon icon-filter\"></div>");
-$templateCache.put("user/user-control.html","<div ng-click=\"user.activate()\" class=\"header-control button button-round icon icon-user\"></div>");
-$templateCache.put("general/popup.html","<div class=\"popup\"><div ng-click=\"popup.deactivate()\" class=\"popup-close button button-round icon icon-close\"></div><div ng-transclude=\"ng-transclude\" class=\"popup-content-wrapper\"></div></div>");}]);
+$templateCache.put("general/popup.html","<div class=\"popup\"><div ng-click=\"popup.deactivate()\" class=\"popup-close button button-round icon icon-close\"></div><div ng-transclude=\"ng-transclude\" class=\"popup-content-wrapper\"></div></div>");
+$templateCache.put("user/user-control.html","<div ng-click=\"user.activate()\" class=\"header-control button button-round icon icon-user\"></div>");}]);

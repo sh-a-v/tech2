@@ -20,10 +20,14 @@
     display none
     width 100%
 
+    will-change left
+
   @media media-phone
     display none
     width 100%
     padding header-height-phone + 10 0 0
+
+    will-change left
 
 .menu-items
   width menu-width
@@ -43,20 +47,20 @@
   transition all 0.2s ease-out
 
   &.active
-    color blue-1
+    color white
 
   @media media-phone
     height 64px
 
 .menu-item-button
-  width 50px
-  height 50px
+  width round-button-size-desktop
+  height round-button-size-desktop
   margin 0 15px
   box-sizing border-box
 
   @media media-phone
-    width 40px
-    height 40px
+    width round-button-size-phone
+    height round-button-size-phone
 
 .menu-item-label
   font-size 16px
