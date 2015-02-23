@@ -4,15 +4,18 @@ app.user.controller 'UserCtrl', ($rootScope, $scope, userService) ->
     userService.checkAuthentication()
 
   @setEventListeners = ->
-    $rootScope.$on 'user:activate', @activate
+    $rootScope.$on 'user:activate', => @activate()
 
   @activate = ->
-    if userService.isAuthenticated() then @_broadcastUserProfileActivate() else @_broadcastUserAuthActivate()
+    if userService.isAuthenticated() then @broadcastUserProfileActivate() else @broadcastUserAuthActivate()
 
-  @_broadcastUserAuthActivate = ->
+  @isAuthenticated = ->
+    userService.isAuthenticated()
+
+  @broadcastUserAuthActivate = ->
     $scope.$broadcast 'user:authActivate'
 
-  @_broadcastUserProfileActivate = ->
+  @broadcastUserProfileActivate = ->
     $scope.$broadcast 'user:profileActivate'
 
   @initialize()

@@ -12,7 +12,7 @@ authRouter.post '/auth/', (req, res, next) ->
     req.logIn(user, (err) -> err) if user
 
     response =
-      success: !err
+      success: err || user ? !err : false
       user:
         authentication: req.isAuthenticated()
     response.user.admin = true if user && user.isAdmin()

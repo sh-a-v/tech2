@@ -3,10 +3,14 @@ app.user.service 'userService', ($rootScope, authResource) ->
     authentication: false
 
   updateUser: (user) ->
-    @user = angular.extend user, @user
+    @user = angular.extend @user, user
 
   authenticate: (email, password) ->
-    authResource.save().$promise.then (res) =>
+    authParams =
+      email: email
+      password: password
+
+    authResource.save(authParams).$promise.then (res) =>
       if res.success
         @updateUser(res.user)
 

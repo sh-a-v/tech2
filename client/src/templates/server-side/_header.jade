@@ -1,14 +1,14 @@
 header.header
   .header-logo
     .header-menu.icon.icon-menu(ng-class='{expanded:menu.isExpanded()}')
-    .header-logo-icon.loading(loading, ng-click='menu.toggle()', ng-class='{loading:loading.isThereRequests()}')
+    .header-logo-icon.loading(loading, ng-click='menu.toggle()', ng-class='{loading: loading.isThereRequests()}')
       .header-logo-icon-gearwheel.icon-gearwheel.gearwheel-1
       .header-logo-icon-gearwheel.icon-gearwheel.gearwheel-2
       .header-logo-icon-gearwheel.icon-gearwheel.gearwheel-3
-    .header-logo-label(ng-class='{transparent:headerControls.isExpanded()}') Engineerium
+    .header-logo-label(ng-class='{transparent: headerControls.isExpanded()}') Engineerium
 
-  header-controls.header-controls(ng-class='{transparent:!headerControls.isVisible(), collapsed:headerControls.isCollapsed()}')
-    user-control.header-control.button.button-round.icon.icon-user(ng-click='user.activate()')
+  header-controls.header-controls(ng-class='{transparent: !headerControls.isVisible(), collapsed: headerControls.isCollapsed()}')
+    user-control.header-control.button.button-round.icon.icon-user(ng-click='user.activate()', ng-class='{active: user.isAuthenticated()}')
     filter-control.header-control.button.button-round.icon.icon-filter(ng-click='filter.activate()')
 
     .header-control.expanded.button.button-round.icon.icon-collapse-arrow(ng-click='headerControls.collapse()')

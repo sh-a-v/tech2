@@ -108,47 +108,6 @@
     };
   });
 
-  app.controller('LoadingCtrl', function($rootScope, $scope) {
-    this.requestsCount = 0;
-    this.initialize = function() {
-      return this.setEventListeners();
-    };
-    this.setEventListeners = function() {
-      $rootScope.$on('server:request', (function(_this) {
-        return function() {
-          return _this.addRequest();
-        };
-      })(this));
-      return $rootScope.$on('server:response', (function(_this) {
-        return function() {
-          return _this.removeRequest();
-        };
-      })(this));
-    };
-    this.addRequest = function() {
-      return this.requestsCount += 1;
-    };
-    this.removeRequest = function() {
-      return this.requestsCount -= 1;
-    };
-    this.isOneRequest = function() {
-      return this.requestsCount === 1;
-    };
-    this.isThereRequests = function() {
-      return this.requestsCount;
-    };
-    return this.initialize();
-  });
-
-  app.directive('loading', function() {
-    return {
-      restrict: 'A',
-      controller: 'LoadingCtrl',
-      controllerAs: 'loading',
-      link: function($scope, el, attrs, loading) {}
-    };
-  });
-
   app.controller('HeaderControlsCtrl', function($rootScope, $scope, $timeout, appSizeService) {
     this.visible = true;
     this.collapsed = appSizeService.isPhone();
@@ -367,13 +326,60 @@
     };
   });
 
+  app.controller('LoadingCtrl', function($rootScope, $scope) {
+    this.requestsCount = 0;
+    this.initialize = function() {
+      return this.setEventListeners();
+    };
+    this.setEventListeners = function() {
+      $rootScope.$on('server:request', (function(_this) {
+        return function() {
+          return _this.addRequest();
+        };
+      })(this));
+      return $rootScope.$on('server:response', (function(_this) {
+        return function() {
+          return _this.removeRequest();
+        };
+      })(this));
+    };
+    this.addRequest = function() {
+      return this.requestsCount += 1;
+    };
+    this.removeRequest = function() {
+      return this.requestsCount -= 1;
+    };
+    this.isOneRequest = function() {
+      return this.requestsCount === 1;
+    };
+    this.isThereRequests = function() {
+      return this.requestsCount;
+    };
+    return this.initialize();
+  });
+
+  app.directive('loading', function() {
+    return {
+      restrict: 'A',
+      controller: 'LoadingCtrl',
+      controllerAs: 'loading',
+      link: function($scope, el, attrs, loading) {}
+    };
+  });
+
   app.controller('PopupCtrl', function($rootScope, $scope) {
     this.active = false;
     this.activate = function() {
+      if (this.isActive()) {
+        return;
+      }
       this.active = true;
       return this.broadcastPopupActivated();
     };
     this.deactivate = function() {
+      if (!this.isActive()) {
+        return;
+      }
       this.active = false;
       return this.broadcastPopupDeactivated();
     };
@@ -522,14 +528,42 @@
     return interceptor;
   });
 
+  app.user.controller('UserAuthCtrl', function($rootScope, $scope, userService) {
+    this.initialize = function() {
+      return this.setEventListeners();
+    };
+    this.setEventListeners = function() {};
+    this.authenticate = function() {
+      return userService.authenticate(this.email, this.password).then((function(_this) {
+        return function(res) {
+          if (userService.isAuthenticated()) {
+            _this.broadcastUserDeactivate();
+          }
+          return res;
+        };
+      })(this));
+    };
+    this.broadcastUserDeactivate = function() {
+      return $scope.$broadcast('user:deactivate');
+    };
+    return this.initialize();
+  });
+
   app.user.directive('userAuth', function() {
     return {
       restrict: 'EA',
       require: '^popup',
+      controller: 'UserAuthCtrl',
+      controllerAs: 'userAuth',
       link: function($scope, el, attrs, popupCtrl) {
         $scope.$on('user:authActivate', (function(_this) {
           return function() {
             return popupCtrl.activate();
+          };
+        })(this));
+        $scope.$on('user:deactivate', (function(_this) {
+          return function() {
+            return popupCtrl.deactivate();
           };
         })(this));
       }
@@ -555,6 +589,11 @@
             return popupCtrl.activate();
           };
         })(this));
+        $scope.$on('user:deactivate', (function(_this) {
+          return function() {
+            return popupCtrl.deactivate();
+          };
+        })(this));
       }
     };
   });
@@ -565,19 +604,26 @@
       return userService.checkAuthentication();
     };
     this.setEventListeners = function() {
-      return $rootScope.$on('user:activate', this.activate);
+      return $rootScope.$on('user:activate', (function(_this) {
+        return function() {
+          return _this.activate();
+        };
+      })(this));
     };
     this.activate = function() {
       if (userService.isAuthenticated()) {
-        return this._broadcastUserProfileActivate();
+        return this.broadcastUserProfileActivate();
       } else {
-        return this._broadcastUserAuthActivate();
+        return this.broadcastUserAuthActivate();
       }
     };
-    this._broadcastUserAuthActivate = function() {
+    this.isAuthenticated = function() {
+      return userService.isAuthenticated();
+    };
+    this.broadcastUserAuthActivate = function() {
       return $scope.$broadcast('user:authActivate');
     };
-    this._broadcastUserProfileActivate = function() {
+    this.broadcastUserProfileActivate = function() {
       return $scope.$broadcast('user:profileActivate');
     };
     return this.initialize();
@@ -597,10 +643,15 @@
         authentication: false
       },
       updateUser: function(user) {
-        return this.user = angular.extend(user, this.user);
+        return this.user = angular.extend(this.user, user);
       },
       authenticate: function(email, password) {
-        return authResource.save().$promise.then((function(_this) {
+        var authParams;
+        authParams = {
+          email: email,
+          password: password
+        };
+        return authResource.save(authParams).$promise.then((function(_this) {
           return function(res) {
             if (res.success) {
               _this.updateUser(res.user);

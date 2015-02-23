@@ -623,21 +623,16 @@ body {
   -ms-flex-align: center;
   -webkit-align-items: center;
   align-items: center;
-}
-@media screen and (min-width: 0) and (max-width: 599px) {
-  .popup-content-wrapper {
-    width: 100%;
-  }
+  width: 94%;
+  max-width: 800px;
 }
 .popup-content {
-  width: 600px;
+  width: 100%;
   min-height: 50px;
   margin: 10px 0;
 }
-@media screen and (min-width: 0) and (max-width: 599px) {
-  .popup-content {
-    width: 94%;
-  }
+.auth .popup-content-wrapper {
+  max-width: 450px;
 }
 .auth-popup-content-controls {
   display: -ms-flexbox;

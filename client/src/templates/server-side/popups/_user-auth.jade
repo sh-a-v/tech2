@@ -10,3 +10,7 @@ user-auth.auth.popup-wrapper(popup)
       .icon.auth-social-icon.icon-vkntkt
 
   .auth-popup-content.popup-content.rect-block
+    form(ng-submit='userAuth.authenticate()')
+      input(type='email', name='email', ng-model='userAuth.email', required)
+      input(type='password', name='password', ng-model='userAuth.password', required)
+      button Отправить

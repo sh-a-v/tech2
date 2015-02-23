@@ -2,10 +2,14 @@ app.controller 'PopupCtrl', ($rootScope, $scope) ->
   @active = false
 
   @activate = ->
+    return if @isActive()
+
     @active = true
     @broadcastPopupActivated()
 
   @deactivate = ->
+    return if !@isActive()
+
     @active = false
     @broadcastPopupDeactivated()
 
