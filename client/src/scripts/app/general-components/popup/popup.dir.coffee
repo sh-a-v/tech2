@@ -1,11 +1,45 @@
 app.directive 'popup', ->
   restrict: 'EA'
-  controller: 'PopupCtrl'
+  controller: PopupController
   controllerAs: 'popup'
   scope: {}
+  bindToController: true
   transclude: true
   templateUrl: 'general/popup.html'
-  link: ($scope, el, attrs, popup) ->
+
+
+class PopupController
+  @active = false
+
+  constructor: ($scope) ->
+    @scope = $scope
+
+  @activate = ->
+    return if @isActive()
+
+    @active = true
+    @broadcastPopupActivated()
+
+  @deactivate = ->
+    return if !@isActive()
+
+    @active = false
+    @broadcastPopupDeactivated()
+
+  @stopPropagation = ($event) ->
+    $event.stopPropagation()
+    $event.preventDefault()
+
+  @isActive = ->
+    @active
+
+  @broadcastPopupActivated = ->
+    @scope.$emit 'popup:activated'
+
+  @broadcastPopupDeactivated = ->
+    @scope.$emit 'popup:deactivated'
+
+  ###link: ($scope, el, attrs, popup) ->
     popupEl = el.children()
     contentEl = angular.element(popupEl[0].getElementsByClassName('popup-content-wrapper')[0])
 
@@ -37,4 +71,4 @@ app.directive 'popup', ->
               Velocity el, {opacity: 0}, {duration: 50, display: 'none'}
           }
 
-    popup.view.initialize()
+    popup.view.initialize()###

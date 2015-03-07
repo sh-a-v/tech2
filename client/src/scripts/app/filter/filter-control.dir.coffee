@@ -1,6 +1,9 @@
 app.filter.directive 'filterControl', ->
   restrict: 'EA'
-  controller: 'FilterCtrl'
+  controller: FilterController
   controllerAs: 'filter'
+  bindToController: true
   #templateUrl: 'filter/filter-control.html'
-  link: ($scope, el, attrs) ->
+
+class FilterController
+  @activate = ->
