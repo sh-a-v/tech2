@@ -1,1 +1,3 @@
-Description will be soon!
+Tech
+angular 1.x
+coffeescript
